@@ -150,7 +150,7 @@
   }
 
   .favorite-button--active {
-    color: var(--color-favorite);
+    color: var(--color-accent);
   }
 
   .favorite-button :deep(svg) {
@@ -171,8 +171,8 @@
   }
 
   .favorite-button--active .favorite-icon :deep(path) {
-    fill: var(--color-favorite);
-    stroke: var(--color-favorite);
+    fill: currentcolor;
+    stroke: currentcolor;
   }
 
   .product-content,

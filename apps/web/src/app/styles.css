@@ -5,7 +5,6 @@
   --color-surface: #211a17;
   --color-card: #2c231e;
   --color-accent: #d99a66;
-  --color-favorite: #d98282;
   --color-text: #f5eee7;
   --color-text-secondary: #b5a59a;
   --color-inactive: #75675f;
@@ -50,8 +49,8 @@
   --icon-size-product-badge: 20px;
   --icon-size-product-meta: 20px;
   --icon-size-product-add: 28px;
-  --icon-size-product-favorite: 30px;
-  --icon-size-product-favorite-compact: 20px;
+  --icon-size-product-favorite: 36px;
+  --icon-size-product-favorite-compact: 24px;
   --control-height-product-meta: 38px;
   --control-size-product-add: 60px;
   --control-size-product-favorite: 48px;
