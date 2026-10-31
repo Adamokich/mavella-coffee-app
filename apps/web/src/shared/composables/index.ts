@@ -1,0 +1,1 @@
+export { useFixedElement } from './useFixedElement';

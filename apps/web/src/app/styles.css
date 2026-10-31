@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --color-background: #14100e;
+  --color-surface: #211a17;
+  --color-card: #2c231e;
+  --color-accent: #d99a66;
+  --color-favorite: #d98282;
+  --color-text: #f5eee7;
+  --color-text-secondary: #b5a59a;
+  --color-inactive: #75675f;
+  --color-border: #43352e;
+  --color-surface-glass: rgb(33 26 23 / 84%);
+  --color-navigation-active-surface: color-mix(in srgb, var(--color-surface) 42%, transparent);
+  --color-navigation-active-border: color-mix(in srgb, var(--color-accent) 68%, transparent);
+  --color-navigation-active-highlight: color-mix(in srgb, var(--color-text) 24%, transparent);
+  --shadow-navigation: 0 12px 32px rgb(0 0 0 / 30%);
+  --shadow-navigation-active: 0 8px 24px color-mix(in srgb, var(--color-accent) 24%, transparent);
+
+  --font-family: 'Inter', system-ui, sans-serif;
+  --font-size-body: 16px;
+  --font-size-heading: 28px;
+  --font-size-brand: 16px;
+  --font-size-greeting: 15px;
+  --font-size-section-heading: 22px;
+  --font-size-product-name: 17px;
+  --font-size-product-card-title: 26px;
+  --font-size-product-card-description: 18px;
+  --font-size-product-card-meta: 16px;
+  --font-size-product-card-description-compact: 12px;
+  --font-size-product-card-meta-compact: 12px;
+  --font-size-price: 18px;
+  --font-size-product-card-price: 28px;
+  --font-size-secondary: 15px;
+  --font-size-category: 16px;
+  --font-size-navigation: 13px;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --control-height-search: 54px;
+  --control-size-search-action: 40px;
+  --control-height-category: 46px;
+  --control-height-navigation: 72px;
+  --icon-size-header: 28px;
+  --icon-size-search: 22px;
+  --icon-size-category: 22px;
+  --icon-size-navigation: 25px;
+  --icon-size-product-badge: 20px;
+  --icon-size-product-meta: 20px;
+  --icon-size-product-add: 28px;
+  --icon-size-product-favorite: 30px;
+  --icon-size-product-favorite-compact: 20px;
+  --control-height-product-meta: 38px;
+  --control-size-product-add: 60px;
+  --control-size-product-favorite: 48px;
+  --control-height-product-meta-compact: 26px;
+  --control-size-product-add-compact: 40px;
+  --control-size-product-favorite-compact: 34px;
+  --radius-product-card: 28px;
+  --radius-product-image: 20px;
+  --radius-product-add: 18px;
+  --radius-product-card-compact: 16px;
+  --radius-product-image-compact: 12px;
+  --radius-product-add-compact: 12px;
+  --spacing-product-card-compact: 12px;
+
+  color: var(--color-text);
+  background: var(--color-background);
+  font-family: var(--font-family);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--color-background);
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+}
+
+h2 {
+  font-size: var(--font-size-section-heading);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.25;
+}
+
+.app-shell {
+  width: 100%;
+  max-width: 1024px;
+  min-height: 100dvh;
+  margin-inline: auto;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    calc(112px + env(safe-area-inset-bottom)) env(safe-area-inset-left);
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 16px;
+}
+
+.page p {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-secondary);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.5;
+}
