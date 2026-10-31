@@ -71,7 +71,9 @@
   }
 
   onMounted(() => {
-    void catalogStore.loadCatalog();
+    if (!catalogStore.categories.length) {
+      void catalogStore.loadCatalog();
+    }
   });
 </script>
 
