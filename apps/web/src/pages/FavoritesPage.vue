@@ -35,8 +35,10 @@
       <button type="button" @click="catalogStore.loadCatalog">Повторить</button>
     </section>
 
-    <section
-      v-else-if="favoriteProducts.length"
+    <TransitionGroup
+      v-else
+      name="favorites-list"
+      tag="section"
       class="favorites-grid"
       aria-label="Товары в избранном"
     >
@@ -48,9 +50,9 @@
         @add="cartStore.addProduct"
         @favorite="favoritesStore.toggleFavorite(product.id)"
       />
-    </section>
+    </TransitionGroup>
 
-    <section v-else class="favorites-message">
+    <section v-if="!favoriteProducts.length && !catalogStore.isLoading" class="favorites-message">
       <h2>Здесь пока пусто</h2>
       <p>Добавляйте напитки с помощью сердечка, чтобы быстро находить их снова.</p>
       <RouterLink to="/">Перейти в каталог</RouterLink>
@@ -83,6 +85,20 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
+  }
+
+  .favorites-list-enter-active,
+  .favorites-list-leave-active,
+  .favorites-list-move {
+    transition:
+      opacity 220ms ease,
+      transform 220ms ease;
+  }
+
+  .favorites-list-enter-from,
+  .favorites-list-leave-to {
+    opacity: 0;
+    transform: scale(0.96);
   }
 
   .favorites-message {
@@ -119,6 +135,14 @@
   .favorites-message button:focus-visible {
     outline: 2px solid var(--color-text);
     outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .favorites-list-enter-active,
+    .favorites-list-leave-active,
+    .favorites-list-move {
+      transition: none;
+    }
   }
 
   @media (min-width: 640px) {
