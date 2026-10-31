@@ -8,6 +8,7 @@
     useCatalogStore,
     type CatalogCategoryId,
   } from '@/features/products';
+  import { useFavoritesStore } from '@/features/favorites';
   import {
     CategoryAllIcon,
     CoffeeIcon,
@@ -20,6 +21,7 @@
   import { useFixedElement } from '@/shared/composables';
 
   const catalogStore = useCatalogStore();
+  const favoritesStore = useFavoritesStore();
   const activeCategoryId = ref<CatalogCategoryId>('all');
   const searchQuery = ref('');
   const { element: catalogControlsWrapper, isFixed: isCatalogControlsFixed } =
@@ -177,6 +179,8 @@
                   v-for="product in section.products"
                   :key="product.id"
                   :product="product"
+                  :is-favorite="favoritesStore.isFavorite(product.id)"
+                  @favorite="favoritesStore.toggleFavorite(product.id)"
                 />
               </div>
             </section>
@@ -187,6 +191,8 @@
               v-for="product in displayedProducts"
               :key="product.id"
               :product="product"
+              :is-favorite="favoritesStore.isFavorite(product.id)"
+              @favorite="favoritesStore.toggleFavorite(product.id)"
             />
           </div>
         </template>
