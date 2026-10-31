@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, ref } from 'vue';
+  import { computed } from 'vue';
 
   import type { ProductCardEmits, ProductCardProps } from '../types';
 
@@ -8,8 +8,6 @@
   const props = defineProps<ProductCardProps>();
 
   const emit = defineEmits<ProductCardEmits>();
-
-  const isFavorite = ref(false);
 
   const price = computed(() =>
     new Intl.NumberFormat('ru-RU', {
@@ -20,8 +18,7 @@
   );
 
   function toggleFavorite() {
-    isFavorite.value = !isFavorite.value;
-    emit('favorite', props.product, isFavorite.value);
+    emit('favorite', props.product);
   }
 </script>
 
@@ -153,7 +150,7 @@
   }
 
   .favorite-button--active {
-    color: var(--color-favorite);
+    color: var(--color-accent);
   }
 
   .favorite-button :deep(svg) {
@@ -174,8 +171,8 @@
   }
 
   .favorite-button--active .favorite-icon :deep(path) {
-    fill: var(--color-favorite);
-    stroke: var(--color-favorite);
+    fill: currentcolor;
+    stroke: currentcolor;
   }
 
   .product-content,
