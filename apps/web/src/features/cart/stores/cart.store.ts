@@ -6,25 +6,28 @@ import type { CartItem } from '../types';
 
 const CART_STORAGE_KEY = 'coffee-app:cart';
 
+function isCartItem(value: unknown): value is CartItem {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+
+  if (!('quantity' in value) || typeof value.quantity !== 'number') {
+    return false;
+  }
+
+  if (!('product' in value) || typeof value.product !== 'object' || value.product === null) {
+    return false;
+  }
+
+  return 'id' in value.product && typeof value.product.id === 'number';
+}
+
 function getStoredCartItems(): CartItem[] {
   try {
     const storedValue = localStorage.getItem(CART_STORAGE_KEY);
     const parsedValue: unknown = storedValue ? JSON.parse(storedValue) : [];
 
-    return Array.isArray(parsedValue)
-      ? parsedValue.filter(
-          (item): item is CartItem =>
-            typeof item === 'object' &&
-            item !== null &&
-            'quantity' in item &&
-            typeof item.quantity === 'number' &&
-            'product' in item &&
-            typeof item.product === 'object' &&
-            item.product !== null &&
-            'id' in item.product &&
-            typeof item.product.id === 'number',
-        )
-      : [];
+    return Array.isArray(parsedValue) ? parsedValue.filter(isCartItem) : [];
   } catch {
     return [];
   }
