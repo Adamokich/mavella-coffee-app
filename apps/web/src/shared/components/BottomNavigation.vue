@@ -16,7 +16,10 @@
 <template>
   <nav
     class="bottom-navigation"
-    :style="{ '--active-navigation-index': activeNavigationIndex }"
+    :style="{
+      '--active-navigation-index': activeNavigationIndex,
+      '--navigation-item-count': NAVIGATION_ITEMS.length,
+    }"
     aria-label="Основная навигация"
   >
     <span class="navigation-active-indicator" aria-hidden="true" />
@@ -30,7 +33,10 @@
       <component
         :is="item.icon"
         class="navigation-icon"
-        :class="{ 'navigation-icon--active': item.to === route.path }"
+        :class="{
+          'navigation-icon--active': item.to === route.path,
+          'navigation-icon--favorite': item.to === '/favorites',
+        }"
       />
       <span>{{ item.label }}</span>
     </RouterLink>
@@ -44,7 +50,7 @@
     bottom: max(12px, env(safe-area-inset-bottom));
     left: 50%;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(var(--navigation-item-count), minmax(0, 1fr));
     width: min(430px, calc(100% - 24px - env(safe-area-inset-left) - env(safe-area-inset-right)));
     overflow: hidden;
     transform: translateX(-50%);
@@ -52,7 +58,7 @@
     border-radius: 30px;
     background: var(--color-surface-glass);
     box-shadow: var(--shadow-navigation);
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(5px);
   }
 
   .navigation-active-indicator {
@@ -60,7 +66,7 @@
     top: 6px;
     left: 6px;
     z-index: 0;
-    width: calc((100% - 12px) / 4);
+    width: calc((100% - 12px) / var(--navigation-item-count));
     height: calc(100% - 12px);
     background: var(--color-navigation-active-surface);
     border: 1px solid var(--color-navigation-active-border);
@@ -102,6 +108,10 @@
 
   .navigation-link.router-link-exact-active {
     color: var(--color-accent);
+  }
+
+  .navigation-link.router-link-exact-active .navigation-icon--favorite {
+    fill: currentColor;
   }
 
   .navigation-icon {
