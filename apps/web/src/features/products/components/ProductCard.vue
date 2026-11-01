@@ -4,18 +4,13 @@
   import type { ProductCardEmits, ProductCardProps } from '../types';
 
   import { FireIcon, HeartIcon, PlusIcon, ServingIcon } from '@/shared/icons';
+  import { formatPrice } from '@/shared/utils';
 
   const props = defineProps<ProductCardProps>();
 
   const emit = defineEmits<ProductCardEmits>();
 
-  const price = computed(() =>
-    new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: 'RUB',
-      maximumFractionDigits: 0,
-    }).format(props.product.priceRub),
-  );
+  const price = computed(() => formatPrice(props.product.priceRub));
 
   function toggleFavorite() {
     emit('favorite', props.product);

@@ -1,13 +1,27 @@
 <script setup lang="ts">
   import { computed, onMounted } from 'vue';
 
-  import { useCartStore } from '@/features/cart';
   import { useFavoritesStore } from '@/features/favorites';
-  import { CatalogSkeleton, ProductCard, useCatalogStore } from '@/features/products';
+  import {
+    CatalogSkeleton,
+    ProductCard,
+    ProductModifierModal,
+    useCatalogStore,
+    useProductModifierModal,
+  } from '@/features/products';
 
   const catalogStore = useCatalogStore();
-  const cartStore = useCartStore();
   const favoritesStore = useFavoritesStore();
+  const {
+    closeModal,
+    openModal,
+    onToggleOption,
+    modifierGroups,
+    selectedProduct,
+    totalRub,
+    isLoading,
+    errorMessage,
+  } = useProductModifierModal();
 
   const favoriteProducts = computed(() =>
     catalogStore.products.filter((product) => favoritesStore.isFavorite(product.id)),
@@ -47,7 +61,7 @@
         :key="product.id"
         :product="product"
         :is-favorite="true"
-        @add="cartStore.addProduct"
+        @add="openModal"
         @favorite="favoritesStore.toggleFavorite(product.id)"
       />
     </TransitionGroup>
@@ -57,6 +71,22 @@
       <p>Добавляйте напитки с помощью сердечка, чтобы быстро находить их снова.</p>
       <RouterLink to="/">Перейти в каталог</RouterLink>
     </section>
+
+    <Teleport to="body">
+      <Transition name="modifier-modal">
+        <ProductModifierModal
+          v-if="selectedProduct"
+          :product="selectedProduct"
+          :groups="modifierGroups"
+          :total-rub="totalRub"
+          :is-loading="isLoading"
+          :error-message="errorMessage"
+          @close="closeModal"
+          @retry="openModal(selectedProduct)"
+          @toggle-option="onToggleOption"
+        />
+      </Transition>
+    </Teleport>
   </section>
 </template>
 
@@ -99,6 +129,11 @@
   .favorites-list-leave-to {
     opacity: 0;
     transform: scale(0.96);
+  }
+
+  .favorites-list-leave-active {
+    position: absolute;
+    pointer-events: none;
   }
 
   .favorites-message {
@@ -155,4 +190,3 @@
     }
   }
 </style>
-

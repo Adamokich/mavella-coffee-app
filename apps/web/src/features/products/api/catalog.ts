@@ -1,4 +1,4 @@
-import type { Category } from '@coffee-app/contracts';
+import type { Category, ProductWithModifiers } from '@coffee-app/contracts';
 import { apiClient, API_ROUTES } from '@/shared/api';
 
 export async function getCatalog(): Promise<Category[]> {

@@ -10,6 +10,9 @@
   --color-inactive: #75675f;
   --color-border: #43352e;
   --color-surface-glass: rgb(33 26 23 / 84%);
+  --color-modal-scrim: rgb(0 0 0 / 64%);
+  --color-modal-choice: #352821;
+  --color-modal-choice-selected: #4a3326;
   --color-navigation-active-surface: color-mix(in srgb, var(--color-surface) 42%, transparent);
   --color-navigation-active-border: color-mix(in srgb, var(--color-accent) 68%, transparent);
   --color-navigation-active-highlight: color-mix(in srgb, var(--color-text) 24%, transparent);
@@ -64,6 +67,12 @@
   --radius-product-image-compact: 12px;
   --radius-product-add-compact: 12px;
   --spacing-product-card-compact: 12px;
+  --radius-modal: 28px 28px 0 0;
+  --radius-modal-image: 18px;
+  --radius-modal-option: 12px;
+  --control-size-modal-close: 36px;
+  --control-height-modal-submit: 56px;
+  --icon-size-modal: 20px;
 
   color: var(--color-text);
   background: var(--color-background);
