@@ -52,7 +52,10 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Category: 'Category',
-  Product: 'Product'
+  Product: 'Product',
+  ModifierGroup: 'ModifierGroup',
+  Modifier: 'Modifier',
+  ModifierOption: 'ModifierOption'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -99,6 +102,35 @@ export const ProductScalarFieldEnum = {
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
+
+
+export const ModifierGroupScalarFieldEnum = {
+  productId: 'productId',
+  modifierId: 'modifierId',
+  modifierOptionId: 'modifierOptionId',
+  minSelected: 'minSelected',
+  maxSelected: 'maxSelected'
+} as const
+
+export type ModifierGroupScalarFieldEnum = (typeof ModifierGroupScalarFieldEnum)[keyof typeof ModifierGroupScalarFieldEnum]
+
+
+export const ModifierScalarFieldEnum = {
+  id: 'id',
+  name: 'name'
+} as const
+
+export type ModifierScalarFieldEnum = (typeof ModifierScalarFieldEnum)[keyof typeof ModifierScalarFieldEnum]
+
+
+export const ModifierOptionScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  priceDelta: 'priceDelta',
+  modifierId: 'modifierId'
+} as const
+
+export type ModifierOptionScalarFieldEnum = (typeof ModifierOptionScalarFieldEnum)[keyof typeof ModifierOptionScalarFieldEnum]
 
 
 export const SortOrder = {
