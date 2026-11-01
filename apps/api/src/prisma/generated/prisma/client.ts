@@ -51,3 +51,18 @@ export type Category = Prisma.CategoryModel
  * 
  */
 export type Product = Prisma.ProductModel
+/**
+ * Model ModifierGroup
+ * 
+ */
+export type ModifierGroup = Prisma.ModifierGroupModel
+/**
+ * Model Modifier
+ * 
+ */
+export type Modifier = Prisma.ModifierModel
+/**
+ * Model ModifierOption
+ * 
+ */
+export type ModifierOption = Prisma.ModifierOptionModel

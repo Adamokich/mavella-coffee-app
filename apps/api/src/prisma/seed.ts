@@ -248,6 +248,217 @@ const PRODUCTS = [
   },
 ] as const;
 
+const MODIFIERS = [
+  {
+    name: 'Объём кофе',
+    categorySlugs: ['coffee'],
+    defaultOptionName: '250 мл',
+    minSelected: 1,
+    maxSelected: 1,
+    options: [
+      { name: '250 мл', priceDelta: 0 },
+      { name: '350 мл', priceDelta: 25 },
+      { name: '450 мл', priceDelta: 45 },
+    ],
+  },
+  {
+    name: 'Молоко',
+    categorySlugs: ['coffee'],
+    defaultOptionName: 'Обычное',
+    minSelected: 1,
+    maxSelected: 1,
+    options: [
+      { name: 'Обычное', priceDelta: 0 },
+      { name: 'Овсяное', priceDelta: 30 },
+      { name: 'Кокосовое', priceDelta: 35 },
+    ],
+  },
+  {
+    name: 'Сироп для кофе',
+    categorySlugs: ['coffee'],
+    defaultOptionName: null,
+    minSelected: 0,
+    maxSelected: 1,
+    options: [
+      { name: 'Ванильный', priceDelta: 20 },
+      { name: 'Карамельный', priceDelta: 20 },
+      { name: 'Шоколадный', priceDelta: 20 },
+      { name: 'Лесной орех', priceDelta: 20 },
+    ],
+  },
+  {
+    name: 'Сладость',
+    categorySlugs: ['coffee', 'tea'],
+    defaultOptionName: 'Без сахара',
+    minSelected: 1,
+    maxSelected: 1,
+    options: [
+      { name: 'Без сахара', priceDelta: 0 },
+      { name: 'С сахаром', priceDelta: 0 },
+    ],
+  },
+  {
+    name: 'Объём чая',
+    categorySlugs: ['tea'],
+    defaultOptionName: '300 мл',
+    minSelected: 1,
+    maxSelected: 1,
+    options: [
+      { name: '300 мл', priceDelta: 0 },
+      { name: '500 мл', priceDelta: 25 },
+    ],
+  },
+  {
+    name: 'Добавки к чаю',
+    categorySlugs: ['tea'],
+    defaultOptionName: null,
+    minSelected: 0,
+    maxSelected: 1,
+    options: [
+      { name: 'Лимон', priceDelta: 15 },
+      { name: 'Мёд', priceDelta: 20 },
+    ],
+  },
+  {
+    name: 'Объём холодных напитков',
+    categorySlugs: ['cold'],
+    defaultOptionName: '300 мл',
+    minSelected: 1,
+    maxSelected: 1,
+    options: [
+      { name: '300 мл', priceDelta: 0 },
+      { name: '450 мл', priceDelta: 30 },
+    ],
+  },
+  {
+    name: 'Лёд',
+    categorySlugs: ['cold'],
+    defaultOptionName: 'Стандартный лёд',
+    minSelected: 1,
+    maxSelected: 1,
+    options: [
+      { name: 'Стандартный лёд', priceDelta: 0 },
+      { name: 'Меньше льда', priceDelta: 0 },
+    ],
+  },
+  {
+    name: 'Сироп для холодных напитков',
+    categorySlugs: ['cold'],
+    defaultOptionName: null,
+    minSelected: 0,
+    maxSelected: 1,
+    options: [
+      { name: 'Клубника', priceDelta: 20 },
+      { name: 'Манго', priceDelta: 20 },
+    ],
+  },
+  {
+    name: 'Топпинги',
+    categorySlugs: ['dessert'],
+    defaultOptionName: null,
+    minSelected: 0,
+    maxSelected: 1,
+    options: [
+      { name: 'Взбитые сливки', priceDelta: 25 },
+      { name: 'Ореховая крошка', priceDelta: 30 },
+    ],
+  },
+  {
+    name: 'Соусы',
+    categorySlugs: ['dessert'],
+    defaultOptionName: null,
+    minSelected: 0,
+    maxSelected: 1,
+    options: [
+      { name: 'Шоколадный соус', priceDelta: 20 },
+      { name: 'Карамельный соус', priceDelta: 20 },
+    ],
+  },
+] as const;
+
+const LEGACY_MODIFIER_NAMES = ['Сироп', 'Сахар', 'Размер'];
+
+async function seedModifiers() {
+  const modifierIds = new Map<string, number>();
+  const optionIds = new Map<string, number>();
+
+  for (const modifier of MODIFIERS) {
+    const existingModifier = await prisma.modifier.findFirst({
+      where: { name: modifier.name },
+    });
+    const savedModifier =
+      existingModifier ??
+      (await prisma.modifier.create({ data: { name: modifier.name } }));
+
+    modifierIds.set(modifier.name, savedModifier.id);
+
+    for (const option of modifier.options) {
+      const existingOption = await prisma.modifierOption.findFirst({
+        where: { modifierId: savedModifier.id, name: option.name },
+      });
+      const savedOption = existingOption
+        ? await prisma.modifierOption.update({
+            where: { id: existingOption.id },
+            data: { priceDelta: option.priceDelta },
+          })
+        : await prisma.modifierOption.create({
+            data: { ...option, modifierId: savedModifier.id },
+          });
+
+      optionIds.set(`${modifier.name}:${option.name}`, savedOption.id);
+    }
+  }
+
+  const products = await prisma.product.findMany({
+    select: { id: true, category: { select: { slug: true } } },
+  });
+  const managedModifierNames = [
+    ...MODIFIERS.map((modifier) => modifier.name),
+    ...LEGACY_MODIFIER_NAMES,
+  ];
+
+  await prisma.modifierGroup.deleteMany({
+    where: {
+      modifier: { name: { in: managedModifierNames } },
+    },
+  });
+
+  for (const modifier of MODIFIERS) {
+    const modifierId = modifierIds.get(modifier.name);
+    const defaultOptionId = modifier.defaultOptionName
+      ? optionIds.get(`${modifier.name}:${modifier.defaultOptionName}`)
+      : null;
+
+    if (!modifierId || (modifier.defaultOptionName && !defaultOptionId)) {
+      throw new Error(`Modifier "${modifier.name}" was not seeded`);
+    }
+
+    for (const product of products) {
+      if (
+        !modifier.categorySlugs.some((slug) => slug === product.category.slug)
+      ) {
+        continue;
+      }
+
+      await prisma.modifierGroup.upsert({
+        where: { productId_modifierId: { productId: product.id, modifierId } },
+        update: {
+          modifierOptionId: defaultOptionId,
+          minSelected: modifier.minSelected,
+          maxSelected: modifier.maxSelected,
+        },
+        create: {
+          productId: product.id,
+          modifierId,
+          modifierOptionId: defaultOptionId,
+          minSelected: modifier.minSelected,
+          maxSelected: modifier.maxSelected,
+        },
+      });
+    }
+  }
+}
+
 async function main() {
   const categoryIds = new Map<string, number>();
 
@@ -294,6 +505,8 @@ async function main() {
       },
     });
   }
+
+  await seedModifiers();
 }
 
 main()

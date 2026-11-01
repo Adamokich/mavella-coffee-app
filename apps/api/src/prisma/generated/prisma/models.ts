@@ -10,4 +10,7 @@
  */
 export type * from './models/Category.js'
 export type * from './models/Product.js'
+export type * from './models/ModifierGroup.js'
+export type * from './models/Modifier.js'
+export type * from './models/ModifierOption.js'
 export type * from './commonInputTypes.js'

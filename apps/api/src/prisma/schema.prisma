@@ -7,6 +7,11 @@ datasource db {
     provider = "postgresql"
 }
 
+enum ModifierSelectionType {
+    SINGLE
+    MULTIPLE
+}
+
 model Category {
     id Int @id @default(autoincrement())
     name String
@@ -31,4 +36,38 @@ model Product {
     category Category @relation(fields: [categoryId], references: [id])
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    modifiers ModifierGroup[]
+}
+
+model ModifierGroup {
+    productId Int
+    modifierId Int
+    modifierOptionId Int?
+    minSelected Int @default(0)
+    maxSelected Int @default(1)
+    defaultOption ModifierOption? @relation(fields: [modifierOptionId], references: [id])
+    
+    product Product @relation(fields: [productId], references: [id])
+    modifier Modifier @relation(fields: [modifierId], references: [id])
+
+    @@id([productId, modifierId])
+}
+
+model Modifier {
+    id Int @id @default(autoincrement())
+    name String
+    
+    modifierOptions ModifierOption[]
+    products ModifierGroup[]
+}
+
+model ModifierOption {
+    id Int @id @default(autoincrement())
+    name String
+    priceDelta Int @default(0)
+    modifierId Int
+
+    modifier Modifier @relation(fields: [modifierId], references: [id])
+    modifierGroup ModifierGroup[]
 }
