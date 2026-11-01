@@ -5,7 +5,9 @@
   import {
     CatalogSkeleton,
     ProductCard,
+    ProductModifierModal,
     useCatalogStore,
+    useProductModifierModal,
     type CatalogCategoryId,
   } from '@/features/products';
   import { useFavoritesStore } from '@/features/favorites';
@@ -24,6 +26,16 @@
   const favoritesStore = useFavoritesStore();
   const activeCategoryId = ref<CatalogCategoryId>('all');
   const searchQuery = ref('');
+  const {
+    closeModal,
+    openModal,
+    onToggleOption,
+    modifierGroups,
+    selectedProduct,
+    totalRub,
+    errorMessage,
+    isLoading,
+  } = useProductModifierModal();
   const { element: catalogControlsWrapper, isFixed: isCatalogControlsFixed } =
     useFixedElement('(min-width: 640px)');
 
@@ -182,6 +194,7 @@
                   :key="product.id"
                   :product="product"
                   :is-favorite="favoritesStore.isFavorite(product.id)"
+                  @add="openModal"
                   @favorite="favoritesStore.toggleFavorite(product.id)"
                 />
               </div>
@@ -194,6 +207,7 @@
               :key="product.id"
               :product="product"
               :is-favorite="favoritesStore.isFavorite(product.id)"
+              @add="openModal"
               @favorite="favoritesStore.toggleFavorite(product.id)"
             />
           </div>
@@ -211,6 +225,22 @@
         </div>
       </section>
     </Transition>
+
+    <Teleport to="body">
+      <Transition name="modifier-modal">
+        <ProductModifierModal
+          v-if="selectedProduct"
+          :product="selectedProduct"
+          :groups="modifierGroups"
+          :total-rub="totalRub"
+          :is-loading="isLoading"
+          :error-message="errorMessage"
+          @close="closeModal"
+          @retry="openModal(selectedProduct)"
+          @toggle-option="onToggleOption"
+        />
+      </Transition>
+    </Teleport>
   </section>
 </template>
 
