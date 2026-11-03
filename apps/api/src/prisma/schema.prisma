@@ -12,6 +12,13 @@ enum ModifierSelectionType {
     MULTIPLE
 }
 
+enum OrderStatus {
+    PENDING
+    CANCELLED
+    READY
+    COMPLETED
+}
+
 model Category {
     id Int @id @default(autoincrement())
     name String
@@ -35,8 +42,11 @@ model Product {
     category Category @relation(fields: [categoryId], references: [id])
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    orderItemId Int
 
     modifiers ModifierGroup[]
+
+    orderItem OrderItem @relation(fields: [orderItemId], references: [id])
 }
 
 model ModifierGroup {
@@ -69,4 +79,41 @@ model ModifierOption {
 
     modifier Modifier @relation(fields: [modifierId], references: [id])
     modifierGroup ModifierGroup[]
+    orderItemOptions OrderItemOption[]
+}
+
+model Order {
+    id Int @id @default(autoincrement())
+    name String
+    numberPhone String
+    comment String?
+    totalPriceRub Int
+    status OrderStatus
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    orderItems OrderItem[]
+}
+
+model OrderItem {
+    id Int @id @default(autoincrement())
+    productCount Int
+    productName String
+    quantity Int
+
+    products Product[]
+    orderItemOptions OrderItemOption[]
+    
+    orderId Int
+    order Order @relation(fields: [orderId], references: [id])
+}
+
+model OrderItemOption {
+    orderItemId Int
+    modifierId Int
+
+    orderItem OrderItem @relation(fields: [orderItemId], references: [id])
+    modifierOption ModifierOption @relation(fields: [modifierId], references: [id])
+
+    @@id([orderItemId, modifierId])
 }
