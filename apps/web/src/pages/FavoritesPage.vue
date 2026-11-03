@@ -1,93 +1,62 @@
 <script setup lang="ts">
-  import { computed, onMounted } from 'vue';
+  import { computed } from 'vue';
 
   import { useFavoritesStore } from '@/features/favorites';
   import {
     CatalogSkeleton,
     ProductCard,
-    ProductModifierModal,
+    CatalogProvider,
     useCatalogStore,
-    useProductModifierModal,
   } from '@/features/products';
 
   const catalogStore = useCatalogStore();
   const favoritesStore = useFavoritesStore();
-  const {
-    closeModal,
-    openModal,
-    onToggleOption,
-    modifierGroups,
-    selectedProduct,
-    totalRub,
-    isLoading,
-    errorMessage,
-  } = useProductModifierModal();
 
   const favoriteProducts = computed(() =>
     catalogStore.products.filter((product) => favoritesStore.isFavorite(product.id)),
   );
-
-  onMounted(() => {
-    if (!catalogStore.categories.length) {
-      void catalogStore.loadCatalog();
-    }
-  });
 </script>
 
 <template>
-  <section class="favorites-page" aria-labelledby="favorites-heading">
-    <header class="favorites-header">
-      <h1 id="favorites-heading">Избранное</h1>
-      <p>Ваши любимые напитки</p>
-    </header>
+  <CatalogProvider v-slot="{ openModal }">
+    <section class="favorites-page" aria-labelledby="favorites-heading">
+      <header class="favorites-header">
+        <h1 id="favorites-heading">Избранное</h1>
+        <p>Ваши любимые напитки</p>
+      </header>
 
-    <CatalogSkeleton v-if="catalogStore.isLoading" />
+      <CatalogSkeleton v-if="catalogStore.isLoading" />
 
-    <section v-else-if="catalogStore.error" class="favorites-message" role="alert">
-      <h2>Не удалось загрузить избранное</h2>
-      <p>{{ catalogStore.error }}</p>
-      <button type="button" @click="catalogStore.loadCatalog">Повторить</button>
-    </section>
+      <section v-else-if="catalogStore.error" class="favorites-message" role="alert">
+        <h2>Не удалось загрузить избранное</h2>
+        <p>{{ catalogStore.error }}</p>
+        <button type="button" @click="catalogStore.loadCatalog">Повторить</button>
+      </section>
 
-    <TransitionGroup
-      v-else
-      name="favorites-list"
-      tag="section"
-      class="favorites-grid"
-      aria-label="Товары в избранном"
-    >
-      <ProductCard
-        v-for="product in favoriteProducts"
-        :key="product.id"
-        :product="product"
-        :is-favorite="true"
-        @add="openModal"
-        @favorite="favoritesStore.toggleFavorite(product.id)"
-      />
-    </TransitionGroup>
-
-    <section v-if="!favoriteProducts.length && !catalogStore.isLoading" class="favorites-message">
-      <h2>Здесь пока пусто</h2>
-      <p>Добавляйте напитки с помощью сердечка, чтобы быстро находить их снова.</p>
-      <RouterLink to="/">Перейти в каталог</RouterLink>
-    </section>
-
-    <Teleport to="body">
-      <Transition name="modifier-modal">
-        <ProductModifierModal
-          v-if="selectedProduct"
-          :product="selectedProduct"
-          :groups="modifierGroups"
-          :total-rub="totalRub"
-          :is-loading="isLoading"
-          :error-message="errorMessage"
-          @close="closeModal"
-          @retry="openModal(selectedProduct)"
-          @toggle-option="onToggleOption"
+      <TransitionGroup
+        v-else
+        name="favorites-list"
+        tag="section"
+        class="favorites-grid"
+        aria-label="Товары в избранном"
+      >
+        <ProductCard
+          v-for="product in favoriteProducts"
+          :key="product.id"
+          :product="product"
+          :is-favorite="true"
+          @add="openModal"
+          @favorite="favoritesStore.toggleFavorite(product.id)"
         />
-      </Transition>
-    </Teleport>
-  </section>
+      </TransitionGroup>
+
+      <section v-if="!favoriteProducts.length && !catalogStore.isLoading" class="favorites-message">
+        <h2>Здесь пока пусто</h2>
+        <p>Добавляйте напитки с помощью сердечка, чтобы быстро находить их снова.</p>
+        <RouterLink to="/">Перейти в каталог</RouterLink>
+      </section>
+    </section>
+  </CatalogProvider>
 </template>
 
 <style scoped>

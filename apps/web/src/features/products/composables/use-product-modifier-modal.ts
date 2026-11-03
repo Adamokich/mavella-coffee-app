@@ -2,13 +2,14 @@ import { computed, ref } from 'vue';
 import type { Product } from '@coffee-app/contracts';
 
 import type { ModifierModalGroup } from '../types';
-import { getProductModifiers } from '../api/productModifier';
 import { isAxiosError } from 'axios';
+import { useCatalogStore } from '../stores/catalog.store';
 import { modifierGroupFormat } from '../utils/modifier-group-format';
 import { toggleOption } from '../utils/toggle-option';
 import { calculateTotalPrice } from '../utils/calculate-total-price';
 
 export function useProductModifierModal() {
+  const catalogStore = useCatalogStore();
   const selectedProduct = ref<Product | null>(null);
   const modifierGroups = ref<readonly ModifierModalGroup[]>([]);
   const isLoading = ref<boolean>(false);
@@ -37,14 +38,19 @@ export function useProductModifierModal() {
     isLoading.value = true;
 
     try {
-      const data = await getProductModifiers(selectedProduct.value.id);
-      modifierGroups.value = modifierGroupFormat(data);
+      const data = await catalogStore.loadProductModifiers(product.id);
+
+      if (selectedProduct.value?.id === product.id) {
+        modifierGroups.value = modifierGroupFormat(data);
+      }
     } catch (error: unknown) {
-      if (isAxiosError(error)) {
+      if (selectedProduct.value?.id === product.id && isAxiosError(error)) {
         errorMessage.value = error.message;
       }
     } finally {
-      isLoading.value = false;
+      if (selectedProduct.value?.id === product.id) {
+        isLoading.value = false;
+      }
     }
   }
 

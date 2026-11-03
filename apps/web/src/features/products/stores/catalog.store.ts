@@ -1,13 +1,16 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
-import type { Category } from '@coffee-app/contracts';
+import type { Category, ProductWithModifiers } from '@coffee-app/contracts';
 
 import { getCatalog } from '../api/catalog';
+import { getProductModifiers } from '../api/productModifier';
 import type { CatalogSection } from '../types';
 
 export const useCatalogStore = defineStore('catalog', () => {
   const categories = ref<Category[]>([]);
   const products = computed(() => categories.value.flatMap((category) => category.products));
+  const modifierCache = ref<Record<number, ProductWithModifiers>>({});
+  const modifierRequests = new Map<number, Promise<ProductWithModifiers>>();
   const isLoading = ref(false);
   const error = ref<string | null>(null);
 
@@ -31,5 +34,45 @@ export const useCatalogStore = defineStore('catalog', () => {
     }
   }
 
-  return { categories, products, isLoading, error, sections, loadCatalog };
+  async function loadProductModifiers(productId: number): Promise<ProductWithModifiers> {
+    const cachedModifiers = modifierCache.value[productId];
+
+    if (cachedModifiers) {
+      return cachedModifiers;
+    }
+
+    const pendingRequest = modifierRequests.get(productId);
+
+    if (pendingRequest) {
+      return pendingRequest;
+    }
+
+    const request = getProductModifiers(productId)
+      .then((productWithModifiers) => {
+        modifierCache.value = {
+          ...modifierCache.value,
+          [productId]: productWithModifiers,
+        };
+
+        return productWithModifiers;
+      })
+      .finally(() => {
+        modifierRequests.delete(productId);
+      });
+
+    modifierRequests.set(productId, request);
+
+    return request;
+  }
+
+  return {
+    categories,
+    products,
+    modifierCache,
+    isLoading,
+    error,
+    sections,
+    loadCatalog,
+    loadProductModifiers,
+  };
 });

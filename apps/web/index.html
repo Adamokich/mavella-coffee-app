@@ -5,8 +5,108 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#3B2416" />
     <title>Coffee</title>
+    <style>
+      .app-splash {
+        position: fixed;
+        z-index: 1000;
+        display: grid;
+        width: 100%;
+        min-width: 320px;
+        height: 100dvh;
+        min-height: 100%;
+        color: #d99a66;
+        background: #14100e;
+        inset: 0;
+        place-items: center;
+      }
+
+      .app-splash__logo-frame {
+        width: min(86vw, 500px);
+      }
+
+      .app-splash__logo-reveal {
+        width: 0;
+        overflow: hidden;
+        animation: app-splash-logo-reveal 2.5s ease-out forwards;
+      }
+
+      .app-splash__logo {
+        display: block;
+        width: min(86vw, 500px);
+        height: auto;
+      }
+
+      .app-splash--leaving {
+        pointer-events: none;
+        animation: app-splash-fade-out 180ms ease forwards;
+      }
+
+      @keyframes app-splash-fade-out {
+        to {
+          opacity: 0;
+        }
+      }
+
+      @keyframes app-splash-logo-reveal {
+        to {
+          width: 100%;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .app-splash__logo-reveal,
+        .app-splash--leaving {
+          animation: none;
+        }
+
+        .app-splash__logo-reveal {
+          width: 100%;
+        }
+      }
+    </style>
   </head>
   <body>
+    <div id="app-splash" class="app-splash" aria-hidden="true">
+      <div class="app-splash__logo-frame">
+        <div class="app-splash__logo-reveal">
+          <svg class="app-splash__logo" viewBox="0 0 560 190" xmlns="http://www.w3.org/2000/svg">
+            <text
+              x="280"
+              y="118"
+              fill="currentColor"
+              font-family="Segoe Script, Brush Script MT, cursive"
+              font-size="110"
+              font-style="italic"
+              font-weight="700"
+              letter-spacing="-10"
+              text-anchor="middle"
+            >
+              Mavella
+            </text>
+            <text
+              x="280"
+              y="156"
+              fill="currentColor"
+              font-family="Inter, system-ui, sans-serif"
+              font-size="18"
+              font-weight="600"
+              letter-spacing="7"
+              text-anchor="middle"
+            >
+              COFFEE
+            </text>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <script>
+      (() => {
+        const splash = document.getElementById('app-splash');
+        if (splash) {
+          splash.dataset.animationStartedAt = String(performance.now());
+        }
+      })();
+    </script>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>

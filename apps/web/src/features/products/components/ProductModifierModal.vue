@@ -156,7 +156,11 @@
       <footer class="modifier-modal__footer">
         <div class="modifier-modal__total">
           <span>Итого</span>
-          <strong>{{ formattedTotal }}</strong>
+          <Transition name="modifier-total" mode="out-in">
+            <strong :key="formattedTotal" class="modifier-modal__total-value">
+              {{ formattedTotal }}
+            </strong>
+          </Transition>
         </div>
 
         <button
@@ -527,9 +531,26 @@
     font-weight: var(--font-weight-regular);
   }
 
-  .modifier-modal__total strong {
+  .modifier-modal__total-value {
     font-size: var(--font-size-price);
     line-height: 1.1;
+  }
+
+  .modifier-total-enter-active,
+  .modifier-total-leave-active {
+    transition:
+      opacity 120ms ease,
+      transform 120ms ease;
+  }
+
+  .modifier-total-enter-from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  .modifier-total-leave-to {
+    opacity: 0;
+    transform: translateY(-4px);
   }
 
   .modifier-modal__submit {
@@ -630,6 +651,11 @@
     .modifier-modal-leave-active,
     .modifier-modal-enter-active .modifier-modal__sheet,
     .modifier-modal-leave-active .modifier-modal__sheet {
+      transition: none;
+    }
+
+    .modifier-total-enter-active,
+    .modifier-total-leave-active {
       transition: none;
     }
 

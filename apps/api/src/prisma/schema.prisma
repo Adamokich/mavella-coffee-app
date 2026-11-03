@@ -27,7 +27,6 @@ model Product {
     name String
     description String?
     servingLabel String?
-    badgeText String?
     priceRub Int
     sortOrder Int @default(0)
     isActive Boolean @default(true)
