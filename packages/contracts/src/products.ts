@@ -3,7 +3,6 @@ export interface Product {
   name: string;
   description: string | null;
   servingLabel: string | null;
-  badgeText: string | null;
   priceRub: number;
   sortOrder: number;
   isActive: boolean;

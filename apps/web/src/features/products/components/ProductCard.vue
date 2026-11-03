@@ -3,7 +3,7 @@
 
   import type { ProductCardEmits, ProductCardProps } from '../types';
 
-  import { FireIcon, HeartIcon, PlusIcon, ServingIcon } from '@/shared/icons';
+  import { HeartIcon, PlusIcon, ServingIcon } from '@/shared/icons';
   import { formatPrice } from '@/shared/utils';
 
   const props = defineProps<ProductCardProps>();
@@ -21,11 +21,6 @@
   <article class="product-card">
     <div class="product-image-wrapper">
       <img class="product-image" :src="product.imageUrl" :alt="product.name" loading="lazy" />
-
-      <span v-if="product.badgeText" class="product-badge">
-        <FireIcon class="product-badge-icon" />
-        {{ product.badgeText }}
-      </span>
 
       <button
         type="button"
@@ -97,30 +92,6 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-  }
-
-  .product-badge {
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    min-height: var(--control-height-product-meta);
-    padding: 0 14px;
-    color: var(--color-accent);
-    background: var(--color-surface-glass);
-    border: 1px solid var(--color-accent);
-    border-radius: 999px;
-    font-size: var(--font-size-secondary);
-    font-weight: var(--font-weight-semibold);
-    line-height: 1;
-  }
-
-  .product-badge-icon {
-    width: var(--icon-size-product-badge);
-    height: var(--icon-size-product-badge);
-    fill: currentcolor;
   }
 
   .favorite-button {
@@ -292,20 +263,6 @@
 
     .product-image-wrapper {
       border-radius: var(--radius-product-image-compact);
-    }
-
-    .product-badge {
-      top: var(--spacing-product-card-compact);
-      left: var(--spacing-product-card-compact);
-      gap: 4px;
-      min-height: 24px;
-      padding: 0 8px;
-      font-size: 10px;
-    }
-
-    .product-badge-icon {
-      width: 12px;
-      height: 12px;
     }
 
     .favorite-button {

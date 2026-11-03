@@ -847,7 +847,6 @@ export const ProductScalarFieldEnum = {
   name: 'name',
   description: 'description',
   servingLabel: 'servingLabel',
-  badgeText: 'badgeText',
   priceRub: 'priceRub',
   sortOrder: 'sortOrder',
   isActive: 'isActive',

@@ -45,7 +45,6 @@ export type ProductMinAggregateOutputType = {
   name: string | null
   description: string | null
   servingLabel: string | null
-  badgeText: string | null
   priceRub: number | null
   sortOrder: number | null
   isActive: boolean | null
@@ -60,7 +59,6 @@ export type ProductMaxAggregateOutputType = {
   name: string | null
   description: string | null
   servingLabel: string | null
-  badgeText: string | null
   priceRub: number | null
   sortOrder: number | null
   isActive: boolean | null
@@ -75,7 +73,6 @@ export type ProductCountAggregateOutputType = {
   name: number
   description: number
   servingLabel: number
-  badgeText: number
   priceRub: number
   sortOrder: number
   isActive: number
@@ -106,7 +103,6 @@ export type ProductMinAggregateInputType = {
   name?: true
   description?: true
   servingLabel?: true
-  badgeText?: true
   priceRub?: true
   sortOrder?: true
   isActive?: true
@@ -121,7 +117,6 @@ export type ProductMaxAggregateInputType = {
   name?: true
   description?: true
   servingLabel?: true
-  badgeText?: true
   priceRub?: true
   sortOrder?: true
   isActive?: true
@@ -136,7 +131,6 @@ export type ProductCountAggregateInputType = {
   name?: true
   description?: true
   servingLabel?: true
-  badgeText?: true
   priceRub?: true
   sortOrder?: true
   isActive?: true
@@ -238,7 +232,6 @@ export type ProductGroupByOutputType = {
   name: string
   description: string | null
   servingLabel: string | null
-  badgeText: string | null
   priceRub: number
   sortOrder: number
   isActive: boolean
@@ -276,7 +269,6 @@ export type ProductWhereInput = {
   name?: Prisma.StringFilter<"Product"> | string
   description?: Prisma.StringNullableFilter<"Product"> | string | null
   servingLabel?: Prisma.StringNullableFilter<"Product"> | string | null
-  badgeText?: Prisma.StringNullableFilter<"Product"> | string | null
   priceRub?: Prisma.IntFilter<"Product"> | number
   sortOrder?: Prisma.IntFilter<"Product"> | number
   isActive?: Prisma.BoolFilter<"Product"> | boolean
@@ -293,7 +285,6 @@ export type ProductOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   servingLabel?: Prisma.SortOrderInput | Prisma.SortOrder
-  badgeText?: Prisma.SortOrderInput | Prisma.SortOrder
   priceRub?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -313,7 +304,6 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Product"> | string
   description?: Prisma.StringNullableFilter<"Product"> | string | null
   servingLabel?: Prisma.StringNullableFilter<"Product"> | string | null
-  badgeText?: Prisma.StringNullableFilter<"Product"> | string | null
   priceRub?: Prisma.IntFilter<"Product"> | number
   sortOrder?: Prisma.IntFilter<"Product"> | number
   isActive?: Prisma.BoolFilter<"Product"> | boolean
@@ -330,7 +320,6 @@ export type ProductOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   servingLabel?: Prisma.SortOrderInput | Prisma.SortOrder
-  badgeText?: Prisma.SortOrderInput | Prisma.SortOrder
   priceRub?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -353,7 +342,6 @@ export type ProductScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Product"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   servingLabel?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
-  badgeText?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   priceRub?: Prisma.IntWithAggregatesFilter<"Product"> | number
   sortOrder?: Prisma.IntWithAggregatesFilter<"Product"> | number
   isActive?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
@@ -367,7 +355,6 @@ export type ProductCreateInput = {
   name: string
   description?: string | null
   servingLabel?: string | null
-  badgeText?: string | null
   priceRub: number
   sortOrder?: number
   isActive?: boolean
@@ -383,7 +370,6 @@ export type ProductUncheckedCreateInput = {
   name: string
   description?: string | null
   servingLabel?: string | null
-  badgeText?: string | null
   priceRub: number
   sortOrder?: number
   isActive?: boolean
@@ -398,7 +384,6 @@ export type ProductUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   servingLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  badgeText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   priceRub?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -414,7 +399,6 @@ export type ProductUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   servingLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  badgeText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   priceRub?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -430,7 +414,6 @@ export type ProductCreateManyInput = {
   name: string
   description?: string | null
   servingLabel?: string | null
-  badgeText?: string | null
   priceRub: number
   sortOrder?: number
   isActive?: boolean
@@ -444,7 +427,6 @@ export type ProductUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   servingLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  badgeText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   priceRub?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -458,7 +440,6 @@ export type ProductUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   servingLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  badgeText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   priceRub?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -483,7 +464,6 @@ export type ProductCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   servingLabel?: Prisma.SortOrder
-  badgeText?: Prisma.SortOrder
   priceRub?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -505,7 +485,6 @@ export type ProductMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   servingLabel?: Prisma.SortOrder
-  badgeText?: Prisma.SortOrder
   priceRub?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -520,7 +499,6 @@ export type ProductMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   servingLabel?: Prisma.SortOrder
-  badgeText?: Prisma.SortOrder
   priceRub?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -610,7 +588,6 @@ export type ProductCreateWithoutCategoryInput = {
   name: string
   description?: string | null
   servingLabel?: string | null
-  badgeText?: string | null
   priceRub: number
   sortOrder?: number
   isActive?: boolean
@@ -625,7 +602,6 @@ export type ProductUncheckedCreateWithoutCategoryInput = {
   name: string
   description?: string | null
   servingLabel?: string | null
-  badgeText?: string | null
   priceRub: number
   sortOrder?: number
   isActive?: boolean
@@ -669,7 +645,6 @@ export type ProductScalarWhereInput = {
   name?: Prisma.StringFilter<"Product"> | string
   description?: Prisma.StringNullableFilter<"Product"> | string | null
   servingLabel?: Prisma.StringNullableFilter<"Product"> | string | null
-  badgeText?: Prisma.StringNullableFilter<"Product"> | string | null
   priceRub?: Prisma.IntFilter<"Product"> | number
   sortOrder?: Prisma.IntFilter<"Product"> | number
   isActive?: Prisma.BoolFilter<"Product"> | boolean
@@ -683,7 +658,6 @@ export type ProductCreateWithoutModifiersInput = {
   name: string
   description?: string | null
   servingLabel?: string | null
-  badgeText?: string | null
   priceRub: number
   sortOrder?: number
   isActive?: boolean
@@ -698,7 +672,6 @@ export type ProductUncheckedCreateWithoutModifiersInput = {
   name: string
   description?: string | null
   servingLabel?: string | null
-  badgeText?: string | null
   priceRub: number
   sortOrder?: number
   isActive?: boolean
@@ -728,7 +701,6 @@ export type ProductUpdateWithoutModifiersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   servingLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  badgeText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   priceRub?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -743,7 +715,6 @@ export type ProductUncheckedUpdateWithoutModifiersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   servingLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  badgeText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   priceRub?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -758,7 +729,6 @@ export type ProductCreateManyCategoryInput = {
   name: string
   description?: string | null
   servingLabel?: string | null
-  badgeText?: string | null
   priceRub: number
   sortOrder?: number
   isActive?: boolean
@@ -771,7 +741,6 @@ export type ProductUpdateWithoutCategoryInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   servingLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  badgeText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   priceRub?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -786,7 +755,6 @@ export type ProductUncheckedUpdateWithoutCategoryInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   servingLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  badgeText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   priceRub?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -801,7 +769,6 @@ export type ProductUncheckedUpdateManyWithoutCategoryInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   servingLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  badgeText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   priceRub?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -846,7 +813,6 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   name?: boolean
   description?: boolean
   servingLabel?: boolean
-  badgeText?: boolean
   priceRub?: boolean
   sortOrder?: boolean
   isActive?: boolean
@@ -864,7 +830,6 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   name?: boolean
   description?: boolean
   servingLabel?: boolean
-  badgeText?: boolean
   priceRub?: boolean
   sortOrder?: boolean
   isActive?: boolean
@@ -880,7 +845,6 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   name?: boolean
   description?: boolean
   servingLabel?: boolean
-  badgeText?: boolean
   priceRub?: boolean
   sortOrder?: boolean
   isActive?: boolean
@@ -896,7 +860,6 @@ export type ProductSelectScalar = {
   name?: boolean
   description?: boolean
   servingLabel?: boolean
-  badgeText?: boolean
   priceRub?: boolean
   sortOrder?: boolean
   isActive?: boolean
@@ -906,7 +869,7 @@ export type ProductSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "servingLabel" | "badgeText" | "priceRub" | "sortOrder" | "isActive" | "imageUrl" | "categoryId" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "servingLabel" | "priceRub" | "sortOrder" | "isActive" | "imageUrl" | "categoryId" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
   modifiers?: boolean | Prisma.Product$modifiersArgs<ExtArgs>
@@ -930,7 +893,6 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     name: string
     description: string | null
     servingLabel: string | null
-    badgeText: string | null
     priceRub: number
     sortOrder: number
     isActive: boolean
@@ -1367,7 +1329,6 @@ export interface ProductFieldRefs {
   readonly name: Prisma.FieldRef<"Product", 'String'>
   readonly description: Prisma.FieldRef<"Product", 'String'>
   readonly servingLabel: Prisma.FieldRef<"Product", 'String'>
-  readonly badgeText: Prisma.FieldRef<"Product", 'String'>
   readonly priceRub: Prisma.FieldRef<"Product", 'Int'>
   readonly sortOrder: Prisma.FieldRef<"Product", 'Int'>
   readonly isActive: Prisma.FieldRef<"Product", 'Boolean'>

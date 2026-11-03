@@ -1,6 +1,7 @@
 export { default as ProductCard } from './components/ProductCard.vue';
 export { default as ProductModifierModal } from './components/ProductModifierModal.vue';
 export { default as CatalogSkeleton } from './components/CatalogSkeleton.vue';
+export { default as CatalogProvider } from './components/CatalogProvider.vue';
 export { useProductModifierModal } from './composables/use-product-modifier-modal';
 export { useCatalogStore } from './stores/catalog.store';
 export type {
