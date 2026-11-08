@@ -3,7 +3,7 @@ import type { Product } from "./products.js";
 export interface ModifierOption {
   id: number;
   name: string;
-  priceDelta: number;
+  priceDeltaRub: number;
   modifierId: number;
 }
 

@@ -20,6 +20,7 @@ export interface ProductModifierModalProps {
   product: Product;
   groups: readonly ModifierModalGroup[];
   totalRub: number;
+  maxQuantity: number;
   isLoading?: boolean;
   errorMessage?: string | null;
 }
@@ -27,6 +28,6 @@ export interface ProductModifierModalProps {
 export interface ProductModifierModalEmits {
   close: [];
   retry: [];
-  submit: [];
+  submit: [quantity: number];
   toggleOption: [groupId: number, optionId: number];
 }

@@ -10,6 +10,12 @@
   --color-inactive: #75675f;
   --color-border: #43352e;
   --color-surface-glass: rgb(33 26 23 / 84%);
+  --color-navigation-glass: color-mix(in srgb, var(--color-surface) 76%, transparent);
+  --color-navigation-glass-shine: color-mix(in srgb, var(--color-text) 16%, transparent);
+  --color-navigation-glass-rim: color-mix(in srgb, var(--color-text) 22%, transparent);
+  --color-navigation-drop: color-mix(in srgb, var(--color-accent) 24%, var(--color-surface));
+  --color-navigation-drop-glow: color-mix(in srgb, var(--color-accent) 55%, transparent);
+  --color-navigation-drop-shine: color-mix(in srgb, var(--color-text) 44%, transparent);
   --color-modal-scrim: rgb(0 0 0 / 64%);
   --color-modal-choice: #352821;
   --color-modal-choice-selected: #4a3326;
