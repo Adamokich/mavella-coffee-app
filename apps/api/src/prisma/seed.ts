@@ -395,10 +395,14 @@ async function seedModifiers() {
       const savedOption = existingOption
         ? await prisma.modifierOption.update({
             where: { id: existingOption.id },
-            data: { priceDelta: option.priceDelta },
+            data: { priceDeltaRub: option.priceDelta },
           })
         : await prisma.modifierOption.create({
-            data: { ...option, modifierId: savedModifier.id },
+            data: {
+              name: option.name,
+              priceDeltaRub: option.priceDelta,
+              modifierId: savedModifier.id,
+            },
           });
 
       optionIds.set(`${modifier.name}:${option.name}`, savedOption.id);

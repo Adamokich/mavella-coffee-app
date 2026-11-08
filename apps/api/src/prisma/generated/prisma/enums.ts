@@ -15,3 +15,13 @@ export const ModifierSelectionType = {
 } as const
 
 export type ModifierSelectionType = (typeof ModifierSelectionType)[keyof typeof ModifierSelectionType]
+
+
+export const OrderStatus = {
+  PENDING: 'PENDING',
+  CANCELLED: 'CANCELLED',
+  READY: 'READY',
+  COMPLETED: 'COMPLETED'
+} as const
+
+export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]

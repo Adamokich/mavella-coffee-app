@@ -28,34 +28,34 @@ export type AggregateModifierOption = {
 
 export type ModifierOptionAvgAggregateOutputType = {
   id: number | null
-  priceDelta: number | null
+  priceDeltaRub: number | null
   modifierId: number | null
 }
 
 export type ModifierOptionSumAggregateOutputType = {
   id: number | null
-  priceDelta: number | null
+  priceDeltaRub: number | null
   modifierId: number | null
 }
 
 export type ModifierOptionMinAggregateOutputType = {
   id: number | null
   name: string | null
-  priceDelta: number | null
+  priceDeltaRub: number | null
   modifierId: number | null
 }
 
 export type ModifierOptionMaxAggregateOutputType = {
   id: number | null
   name: string | null
-  priceDelta: number | null
+  priceDeltaRub: number | null
   modifierId: number | null
 }
 
 export type ModifierOptionCountAggregateOutputType = {
   id: number
   name: number
-  priceDelta: number
+  priceDeltaRub: number
   modifierId: number
   _all: number
 }
@@ -63,34 +63,34 @@ export type ModifierOptionCountAggregateOutputType = {
 
 export type ModifierOptionAvgAggregateInputType = {
   id?: true
-  priceDelta?: true
+  priceDeltaRub?: true
   modifierId?: true
 }
 
 export type ModifierOptionSumAggregateInputType = {
   id?: true
-  priceDelta?: true
+  priceDeltaRub?: true
   modifierId?: true
 }
 
 export type ModifierOptionMinAggregateInputType = {
   id?: true
   name?: true
-  priceDelta?: true
+  priceDeltaRub?: true
   modifierId?: true
 }
 
 export type ModifierOptionMaxAggregateInputType = {
   id?: true
   name?: true
-  priceDelta?: true
+  priceDeltaRub?: true
   modifierId?: true
 }
 
 export type ModifierOptionCountAggregateInputType = {
   id?: true
   name?: true
-  priceDelta?: true
+  priceDeltaRub?: true
   modifierId?: true
   _all?: true
 }
@@ -184,7 +184,7 @@ export type ModifierOptionGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
 export type ModifierOptionGroupByOutputType = {
   id: number
   name: string
-  priceDelta: number
+  priceDeltaRub: number
   modifierId: number
   _count: ModifierOptionCountAggregateOutputType | null
   _avg: ModifierOptionAvgAggregateOutputType | null
@@ -214,19 +214,21 @@ export type ModifierOptionWhereInput = {
   NOT?: Prisma.ModifierOptionWhereInput | Prisma.ModifierOptionWhereInput[]
   id?: Prisma.IntFilter<"ModifierOption"> | number
   name?: Prisma.StringFilter<"ModifierOption"> | string
-  priceDelta?: Prisma.IntFilter<"ModifierOption"> | number
+  priceDeltaRub?: Prisma.IntFilter<"ModifierOption"> | number
   modifierId?: Prisma.IntFilter<"ModifierOption"> | number
   modifier?: Prisma.XOR<Prisma.ModifierScalarRelationFilter, Prisma.ModifierWhereInput>
   modifierGroup?: Prisma.ModifierGroupListRelationFilter
+  orderItemOptions?: Prisma.OrderItemOptionListRelationFilter
 }
 
 export type ModifierOptionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  priceDelta?: Prisma.SortOrder
+  priceDeltaRub?: Prisma.SortOrder
   modifierId?: Prisma.SortOrder
   modifier?: Prisma.ModifierOrderByWithRelationInput
   modifierGroup?: Prisma.ModifierGroupOrderByRelationAggregateInput
+  orderItemOptions?: Prisma.OrderItemOptionOrderByRelationAggregateInput
 }
 
 export type ModifierOptionWhereUniqueInput = Prisma.AtLeast<{
@@ -235,16 +237,17 @@ export type ModifierOptionWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ModifierOptionWhereInput[]
   NOT?: Prisma.ModifierOptionWhereInput | Prisma.ModifierOptionWhereInput[]
   name?: Prisma.StringFilter<"ModifierOption"> | string
-  priceDelta?: Prisma.IntFilter<"ModifierOption"> | number
+  priceDeltaRub?: Prisma.IntFilter<"ModifierOption"> | number
   modifierId?: Prisma.IntFilter<"ModifierOption"> | number
   modifier?: Prisma.XOR<Prisma.ModifierScalarRelationFilter, Prisma.ModifierWhereInput>
   modifierGroup?: Prisma.ModifierGroupListRelationFilter
+  orderItemOptions?: Prisma.OrderItemOptionListRelationFilter
 }, "id">
 
 export type ModifierOptionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  priceDelta?: Prisma.SortOrder
+  priceDeltaRub?: Prisma.SortOrder
   modifierId?: Prisma.SortOrder
   _count?: Prisma.ModifierOptionCountOrderByAggregateInput
   _avg?: Prisma.ModifierOptionAvgOrderByAggregateInput
@@ -259,56 +262,60 @@ export type ModifierOptionScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ModifierOptionScalarWhereWithAggregatesInput | Prisma.ModifierOptionScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"ModifierOption"> | number
   name?: Prisma.StringWithAggregatesFilter<"ModifierOption"> | string
-  priceDelta?: Prisma.IntWithAggregatesFilter<"ModifierOption"> | number
+  priceDeltaRub?: Prisma.IntWithAggregatesFilter<"ModifierOption"> | number
   modifierId?: Prisma.IntWithAggregatesFilter<"ModifierOption"> | number
 }
 
 export type ModifierOptionCreateInput = {
   name: string
-  priceDelta?: number
+  priceDeltaRub?: number
   modifier: Prisma.ModifierCreateNestedOneWithoutModifierOptionsInput
   modifierGroup?: Prisma.ModifierGroupCreateNestedManyWithoutDefaultOptionInput
+  orderItemOptions?: Prisma.OrderItemOptionCreateNestedManyWithoutModifierOptionInput
 }
 
 export type ModifierOptionUncheckedCreateInput = {
   id?: number
   name: string
-  priceDelta?: number
+  priceDeltaRub?: number
   modifierId: number
   modifierGroup?: Prisma.ModifierGroupUncheckedCreateNestedManyWithoutDefaultOptionInput
+  orderItemOptions?: Prisma.OrderItemOptionUncheckedCreateNestedManyWithoutModifierOptionInput
 }
 
 export type ModifierOptionUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  priceDelta?: Prisma.IntFieldUpdateOperationsInput | number
+  priceDeltaRub?: Prisma.IntFieldUpdateOperationsInput | number
   modifier?: Prisma.ModifierUpdateOneRequiredWithoutModifierOptionsNestedInput
   modifierGroup?: Prisma.ModifierGroupUpdateManyWithoutDefaultOptionNestedInput
+  orderItemOptions?: Prisma.OrderItemOptionUpdateManyWithoutModifierOptionNestedInput
 }
 
 export type ModifierOptionUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  priceDelta?: Prisma.IntFieldUpdateOperationsInput | number
+  priceDeltaRub?: Prisma.IntFieldUpdateOperationsInput | number
   modifierId?: Prisma.IntFieldUpdateOperationsInput | number
   modifierGroup?: Prisma.ModifierGroupUncheckedUpdateManyWithoutDefaultOptionNestedInput
+  orderItemOptions?: Prisma.OrderItemOptionUncheckedUpdateManyWithoutModifierOptionNestedInput
 }
 
 export type ModifierOptionCreateManyInput = {
   id?: number
   name: string
-  priceDelta?: number
+  priceDeltaRub?: number
   modifierId: number
 }
 
 export type ModifierOptionUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  priceDelta?: Prisma.IntFieldUpdateOperationsInput | number
+  priceDeltaRub?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ModifierOptionUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  priceDelta?: Prisma.IntFieldUpdateOperationsInput | number
+  priceDeltaRub?: Prisma.IntFieldUpdateOperationsInput | number
   modifierId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -330,33 +337,33 @@ export type ModifierOptionOrderByRelationAggregateInput = {
 export type ModifierOptionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  priceDelta?: Prisma.SortOrder
+  priceDeltaRub?: Prisma.SortOrder
   modifierId?: Prisma.SortOrder
 }
 
 export type ModifierOptionAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  priceDelta?: Prisma.SortOrder
+  priceDeltaRub?: Prisma.SortOrder
   modifierId?: Prisma.SortOrder
 }
 
 export type ModifierOptionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  priceDelta?: Prisma.SortOrder
+  priceDeltaRub?: Prisma.SortOrder
   modifierId?: Prisma.SortOrder
 }
 
 export type ModifierOptionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  priceDelta?: Prisma.SortOrder
+  priceDeltaRub?: Prisma.SortOrder
   modifierId?: Prisma.SortOrder
 }
 
 export type ModifierOptionSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  priceDelta?: Prisma.SortOrder
+  priceDeltaRub?: Prisma.SortOrder
   modifierId?: Prisma.SortOrder
 }
 
@@ -418,17 +425,35 @@ export type ModifierOptionUncheckedUpdateManyWithoutModifierNestedInput = {
   deleteMany?: Prisma.ModifierOptionScalarWhereInput | Prisma.ModifierOptionScalarWhereInput[]
 }
 
+export type ModifierOptionCreateNestedOneWithoutOrderItemOptionsInput = {
+  create?: Prisma.XOR<Prisma.ModifierOptionCreateWithoutOrderItemOptionsInput, Prisma.ModifierOptionUncheckedCreateWithoutOrderItemOptionsInput>
+  connectOrCreate?: Prisma.ModifierOptionCreateOrConnectWithoutOrderItemOptionsInput
+  connect?: Prisma.ModifierOptionWhereUniqueInput
+}
+
+export type ModifierOptionUpdateOneWithoutOrderItemOptionsNestedInput = {
+  create?: Prisma.XOR<Prisma.ModifierOptionCreateWithoutOrderItemOptionsInput, Prisma.ModifierOptionUncheckedCreateWithoutOrderItemOptionsInput>
+  connectOrCreate?: Prisma.ModifierOptionCreateOrConnectWithoutOrderItemOptionsInput
+  upsert?: Prisma.ModifierOptionUpsertWithoutOrderItemOptionsInput
+  disconnect?: Prisma.ModifierOptionWhereInput | boolean
+  delete?: Prisma.ModifierOptionWhereInput | boolean
+  connect?: Prisma.ModifierOptionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ModifierOptionUpdateToOneWithWhereWithoutOrderItemOptionsInput, Prisma.ModifierOptionUpdateWithoutOrderItemOptionsInput>, Prisma.ModifierOptionUncheckedUpdateWithoutOrderItemOptionsInput>
+}
+
 export type ModifierOptionCreateWithoutModifierGroupInput = {
   name: string
-  priceDelta?: number
+  priceDeltaRub?: number
   modifier: Prisma.ModifierCreateNestedOneWithoutModifierOptionsInput
+  orderItemOptions?: Prisma.OrderItemOptionCreateNestedManyWithoutModifierOptionInput
 }
 
 export type ModifierOptionUncheckedCreateWithoutModifierGroupInput = {
   id?: number
   name: string
-  priceDelta?: number
+  priceDeltaRub?: number
   modifierId: number
+  orderItemOptions?: Prisma.OrderItemOptionUncheckedCreateNestedManyWithoutModifierOptionInput
 }
 
 export type ModifierOptionCreateOrConnectWithoutModifierGroupInput = {
@@ -449,28 +474,32 @@ export type ModifierOptionUpdateToOneWithWhereWithoutModifierGroupInput = {
 
 export type ModifierOptionUpdateWithoutModifierGroupInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  priceDelta?: Prisma.IntFieldUpdateOperationsInput | number
+  priceDeltaRub?: Prisma.IntFieldUpdateOperationsInput | number
   modifier?: Prisma.ModifierUpdateOneRequiredWithoutModifierOptionsNestedInput
+  orderItemOptions?: Prisma.OrderItemOptionUpdateManyWithoutModifierOptionNestedInput
 }
 
 export type ModifierOptionUncheckedUpdateWithoutModifierGroupInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  priceDelta?: Prisma.IntFieldUpdateOperationsInput | number
+  priceDeltaRub?: Prisma.IntFieldUpdateOperationsInput | number
   modifierId?: Prisma.IntFieldUpdateOperationsInput | number
+  orderItemOptions?: Prisma.OrderItemOptionUncheckedUpdateManyWithoutModifierOptionNestedInput
 }
 
 export type ModifierOptionCreateWithoutModifierInput = {
   name: string
-  priceDelta?: number
+  priceDeltaRub?: number
   modifierGroup?: Prisma.ModifierGroupCreateNestedManyWithoutDefaultOptionInput
+  orderItemOptions?: Prisma.OrderItemOptionCreateNestedManyWithoutModifierOptionInput
 }
 
 export type ModifierOptionUncheckedCreateWithoutModifierInput = {
   id?: number
   name: string
-  priceDelta?: number
+  priceDeltaRub?: number
   modifierGroup?: Prisma.ModifierGroupUncheckedCreateNestedManyWithoutDefaultOptionInput
+  orderItemOptions?: Prisma.OrderItemOptionUncheckedCreateNestedManyWithoutModifierOptionInput
 }
 
 export type ModifierOptionCreateOrConnectWithoutModifierInput = {
@@ -505,33 +534,81 @@ export type ModifierOptionScalarWhereInput = {
   NOT?: Prisma.ModifierOptionScalarWhereInput | Prisma.ModifierOptionScalarWhereInput[]
   id?: Prisma.IntFilter<"ModifierOption"> | number
   name?: Prisma.StringFilter<"ModifierOption"> | string
-  priceDelta?: Prisma.IntFilter<"ModifierOption"> | number
+  priceDeltaRub?: Prisma.IntFilter<"ModifierOption"> | number
   modifierId?: Prisma.IntFilter<"ModifierOption"> | number
+}
+
+export type ModifierOptionCreateWithoutOrderItemOptionsInput = {
+  name: string
+  priceDeltaRub?: number
+  modifier: Prisma.ModifierCreateNestedOneWithoutModifierOptionsInput
+  modifierGroup?: Prisma.ModifierGroupCreateNestedManyWithoutDefaultOptionInput
+}
+
+export type ModifierOptionUncheckedCreateWithoutOrderItemOptionsInput = {
+  id?: number
+  name: string
+  priceDeltaRub?: number
+  modifierId: number
+  modifierGroup?: Prisma.ModifierGroupUncheckedCreateNestedManyWithoutDefaultOptionInput
+}
+
+export type ModifierOptionCreateOrConnectWithoutOrderItemOptionsInput = {
+  where: Prisma.ModifierOptionWhereUniqueInput
+  create: Prisma.XOR<Prisma.ModifierOptionCreateWithoutOrderItemOptionsInput, Prisma.ModifierOptionUncheckedCreateWithoutOrderItemOptionsInput>
+}
+
+export type ModifierOptionUpsertWithoutOrderItemOptionsInput = {
+  update: Prisma.XOR<Prisma.ModifierOptionUpdateWithoutOrderItemOptionsInput, Prisma.ModifierOptionUncheckedUpdateWithoutOrderItemOptionsInput>
+  create: Prisma.XOR<Prisma.ModifierOptionCreateWithoutOrderItemOptionsInput, Prisma.ModifierOptionUncheckedCreateWithoutOrderItemOptionsInput>
+  where?: Prisma.ModifierOptionWhereInput
+}
+
+export type ModifierOptionUpdateToOneWithWhereWithoutOrderItemOptionsInput = {
+  where?: Prisma.ModifierOptionWhereInput
+  data: Prisma.XOR<Prisma.ModifierOptionUpdateWithoutOrderItemOptionsInput, Prisma.ModifierOptionUncheckedUpdateWithoutOrderItemOptionsInput>
+}
+
+export type ModifierOptionUpdateWithoutOrderItemOptionsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  priceDeltaRub?: Prisma.IntFieldUpdateOperationsInput | number
+  modifier?: Prisma.ModifierUpdateOneRequiredWithoutModifierOptionsNestedInput
+  modifierGroup?: Prisma.ModifierGroupUpdateManyWithoutDefaultOptionNestedInput
+}
+
+export type ModifierOptionUncheckedUpdateWithoutOrderItemOptionsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  priceDeltaRub?: Prisma.IntFieldUpdateOperationsInput | number
+  modifierId?: Prisma.IntFieldUpdateOperationsInput | number
+  modifierGroup?: Prisma.ModifierGroupUncheckedUpdateManyWithoutDefaultOptionNestedInput
 }
 
 export type ModifierOptionCreateManyModifierInput = {
   id?: number
   name: string
-  priceDelta?: number
+  priceDeltaRub?: number
 }
 
 export type ModifierOptionUpdateWithoutModifierInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  priceDelta?: Prisma.IntFieldUpdateOperationsInput | number
+  priceDeltaRub?: Prisma.IntFieldUpdateOperationsInput | number
   modifierGroup?: Prisma.ModifierGroupUpdateManyWithoutDefaultOptionNestedInput
+  orderItemOptions?: Prisma.OrderItemOptionUpdateManyWithoutModifierOptionNestedInput
 }
 
 export type ModifierOptionUncheckedUpdateWithoutModifierInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  priceDelta?: Prisma.IntFieldUpdateOperationsInput | number
+  priceDeltaRub?: Prisma.IntFieldUpdateOperationsInput | number
   modifierGroup?: Prisma.ModifierGroupUncheckedUpdateManyWithoutDefaultOptionNestedInput
+  orderItemOptions?: Prisma.OrderItemOptionUncheckedUpdateManyWithoutModifierOptionNestedInput
 }
 
 export type ModifierOptionUncheckedUpdateManyWithoutModifierInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  priceDelta?: Prisma.IntFieldUpdateOperationsInput | number
+  priceDeltaRub?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
@@ -541,10 +618,12 @@ export type ModifierOptionUncheckedUpdateManyWithoutModifierInput = {
 
 export type ModifierOptionCountOutputType = {
   modifierGroup: number
+  orderItemOptions: number
 }
 
 export type ModifierOptionCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   modifierGroup?: boolean | ModifierOptionCountOutputTypeCountModifierGroupArgs
+  orderItemOptions?: boolean | ModifierOptionCountOutputTypeCountOrderItemOptionsArgs
 }
 
 /**
@@ -564,21 +643,29 @@ export type ModifierOptionCountOutputTypeCountModifierGroupArgs<ExtArgs extends 
   where?: Prisma.ModifierGroupWhereInput
 }
 
+/**
+ * ModifierOptionCountOutputType without action
+ */
+export type ModifierOptionCountOutputTypeCountOrderItemOptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrderItemOptionWhereInput
+}
+
 
 export type ModifierOptionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  priceDelta?: boolean
+  priceDeltaRub?: boolean
   modifierId?: boolean
   modifier?: boolean | Prisma.ModifierDefaultArgs<ExtArgs>
   modifierGroup?: boolean | Prisma.ModifierOption$modifierGroupArgs<ExtArgs>
+  orderItemOptions?: boolean | Prisma.ModifierOption$orderItemOptionsArgs<ExtArgs>
   _count?: boolean | Prisma.ModifierOptionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["modifierOption"]>
 
 export type ModifierOptionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  priceDelta?: boolean
+  priceDeltaRub?: boolean
   modifierId?: boolean
   modifier?: boolean | Prisma.ModifierDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["modifierOption"]>
@@ -586,7 +673,7 @@ export type ModifierOptionSelectCreateManyAndReturn<ExtArgs extends runtime.Type
 export type ModifierOptionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  priceDelta?: boolean
+  priceDeltaRub?: boolean
   modifierId?: boolean
   modifier?: boolean | Prisma.ModifierDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["modifierOption"]>
@@ -594,14 +681,15 @@ export type ModifierOptionSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
 export type ModifierOptionSelectScalar = {
   id?: boolean
   name?: boolean
-  priceDelta?: boolean
+  priceDeltaRub?: boolean
   modifierId?: boolean
 }
 
-export type ModifierOptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "priceDelta" | "modifierId", ExtArgs["result"]["modifierOption"]>
+export type ModifierOptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "priceDeltaRub" | "modifierId", ExtArgs["result"]["modifierOption"]>
 export type ModifierOptionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   modifier?: boolean | Prisma.ModifierDefaultArgs<ExtArgs>
   modifierGroup?: boolean | Prisma.ModifierOption$modifierGroupArgs<ExtArgs>
+  orderItemOptions?: boolean | Prisma.ModifierOption$orderItemOptionsArgs<ExtArgs>
   _count?: boolean | Prisma.ModifierOptionCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ModifierOptionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -616,11 +704,12 @@ export type $ModifierOptionPayload<ExtArgs extends runtime.Types.Extensions.Inte
   objects: {
     modifier: Prisma.$ModifierPayload<ExtArgs>
     modifierGroup: Prisma.$ModifierGroupPayload<ExtArgs>[]
+    orderItemOptions: Prisma.$OrderItemOptionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     name: string
-    priceDelta: number
+    priceDeltaRub: number
     modifierId: number
   }, ExtArgs["result"]["modifierOption"]>
   composites: {}
@@ -1018,6 +1107,7 @@ export interface Prisma__ModifierOptionClient<T, Null = never, ExtArgs extends r
   readonly [Symbol.toStringTag]: "PrismaPromise"
   modifier<T extends Prisma.ModifierDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ModifierDefaultArgs<ExtArgs>>): Prisma.Prisma__ModifierClient<runtime.Types.Result.GetResult<Prisma.$ModifierPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   modifierGroup<T extends Prisma.ModifierOption$modifierGroupArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ModifierOption$modifierGroupArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ModifierGroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  orderItemOptions<T extends Prisma.ModifierOption$orderItemOptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ModifierOption$orderItemOptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderItemOptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1049,7 +1139,7 @@ export interface Prisma__ModifierOptionClient<T, Null = never, ExtArgs extends r
 export interface ModifierOptionFieldRefs {
   readonly id: Prisma.FieldRef<"ModifierOption", 'Int'>
   readonly name: Prisma.FieldRef<"ModifierOption", 'String'>
-  readonly priceDelta: Prisma.FieldRef<"ModifierOption", 'Int'>
+  readonly priceDeltaRub: Prisma.FieldRef<"ModifierOption", 'Int'>
   readonly modifierId: Prisma.FieldRef<"ModifierOption", 'Int'>
 }
     
@@ -1473,6 +1563,30 @@ export type ModifierOption$modifierGroupArgs<ExtArgs extends runtime.Types.Exten
   take?: number
   skip?: number
   distinct?: Prisma.ModifierGroupScalarFieldEnum | Prisma.ModifierGroupScalarFieldEnum[]
+}
+
+/**
+ * ModifierOption.orderItemOptions
+ */
+export type ModifierOption$orderItemOptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OrderItemOption
+   */
+  select?: Prisma.OrderItemOptionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OrderItemOption
+   */
+  omit?: Prisma.OrderItemOptionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrderItemOptionInclude<ExtArgs> | null
+  where?: Prisma.OrderItemOptionWhereInput
+  orderBy?: Prisma.OrderItemOptionOrderByWithRelationInput | Prisma.OrderItemOptionOrderByWithRelationInput[]
+  cursor?: Prisma.OrderItemOptionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrderItemOptionScalarFieldEnum | Prisma.OrderItemOptionScalarFieldEnum[]
 }
 
 /**
