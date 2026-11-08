@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <rect width="1024" height="1024" fill="#14100E" />
+  <circle cx="512" cy="512" r="430" fill="none" stroke="#D99A66" stroke-opacity="0.24" stroke-width="2" />
+  <text
+    x="512"
+    y="510"
+    fill="#D99A66"
+    font-family="Segoe Script, Brush Script MT, cursive"
+    font-size="192"
+    font-style="italic"
+    font-weight="700"
+    letter-spacing="-18"
+    text-anchor="middle"
+  >
+    Mavella
+  </text>
+  <text
+    x="512"
+    y="620"
+    fill="#D99A66"
+    font-family="Inter, system-ui, sans-serif"
+    font-size="42"
+    font-weight="600"
+    letter-spacing="17"
+    text-anchor="middle"
+  >
+    COFFEE
+  </text>
+</svg>

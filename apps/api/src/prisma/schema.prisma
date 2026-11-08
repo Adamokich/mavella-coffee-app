@@ -1,119 +1,126 @@
 generator client {
-    provider = "prisma-client"
-    output = "generated/prisma"
+  provider = "prisma-client"
+  output   = "generated/prisma"
 }
 
 datasource db {
-    provider = "postgresql"
+  provider = "postgresql"
 }
 
 enum ModifierSelectionType {
-    SINGLE
-    MULTIPLE
+  SINGLE
+  MULTIPLE
 }
 
 enum OrderStatus {
-    PENDING
-    CANCELLED
-    READY
-    COMPLETED
+  PENDING
+  CANCELLED
+  READY
+  COMPLETED
 }
 
 model Category {
-    id Int @id @default(autoincrement())
-    name String
-    slug String @unique
-    sortOrder Int @default(0)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    products Product[]
+  id        Int       @id @default(autoincrement())
+  name      String
+  slug      String    @unique
+  sortOrder Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
 }
 
 model Product {
-    id Int @id @default(autoincrement())
-    name String
-    description String?
-    servingLabel String?
-    priceRub Int
-    sortOrder Int @default(0)
-    isActive Boolean @default(true)
-    imageUrl String
-    categoryId Int
-    category Category @relation(fields: [categoryId], references: [id])
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    orderItemId Int
+  id           Int      @id @default(autoincrement())
+  name         String
+  description  String?
+  servingLabel String?
+  priceRub     Int
+  sortOrder    Int      @default(0)
+  isActive     Boolean  @default(true)
+  imageUrl     String
+  categoryId   Int
+  category     Category @relation(fields: [categoryId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-    modifiers ModifierGroup[]
-
-    orderItem OrderItem @relation(fields: [orderItemId], references: [id])
+  modifiers  ModifierGroup[]
+  orderItems OrderItem[]
 }
 
 model ModifierGroup {
-    productId Int
-    modifierId Int
-    modifierOptionId Int?
-    minSelected Int @default(0)
-    maxSelected Int @default(1)
-    defaultOption ModifierOption? @relation(fields: [modifierOptionId], references: [id])
-    
-    product Product @relation(fields: [productId], references: [id])
-    modifier Modifier @relation(fields: [modifierId], references: [id])
+  productId        Int
+  modifierId       Int
+  modifierOptionId Int?
+  minSelected      Int             @default(0)
+  maxSelected      Int             @default(1)
+  defaultOption    ModifierOption? @relation(fields: [modifierOptionId], references: [id])
 
-    @@id([productId, modifierId])
+  product  Product  @relation(fields: [productId], references: [id])
+  modifier Modifier @relation(fields: [modifierId], references: [id])
+
+  @@id([productId, modifierId])
 }
 
 model Modifier {
-    id Int @id @default(autoincrement())
-    name String
-    
-    modifierOptions ModifierOption[]
-    products ModifierGroup[]
+  id   Int    @id @default(autoincrement())
+  name String
+
+  modifierOptions ModifierOption[]
+  products        ModifierGroup[]
 }
 
 model ModifierOption {
-    id Int @id @default(autoincrement())
-    name String
-    priceDelta Int @default(0)
-    modifierId Int
+  id            Int    @id @default(autoincrement())
+  name          String
+  priceDeltaRub Int    @default(0)
+  modifierId    Int
 
-    modifier Modifier @relation(fields: [modifierId], references: [id])
-    modifierGroup ModifierGroup[]
-    orderItemOptions OrderItemOption[]
+  modifier         Modifier          @relation(fields: [modifierId], references: [id])
+  modifierGroup    ModifierGroup[]
+  orderItemOptions OrderItemOption[]
 }
 
 model Order {
-    id Int @id @default(autoincrement())
-    name String
-    numberPhone String
-    comment String?
-    totalPriceRub Int
-    status OrderStatus
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    
-    orderItems OrderItem[]
+  id Int @id @default(autoincrement())
+
+  idempotencyKey String @unique
+  requestHash    String
+
+  customerName  String
+  customerPhone String
+  comment       String?
+  totalPriceRub Int
+  status        OrderStatus @default(PENDING)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  orderItems OrderItem[]
 }
 
 model OrderItem {
-    id Int @id @default(autoincrement())
-    productCount Int
-    productName String
-    quantity Int
+  id           Int    @id @default(autoincrement())
+  productName  String
+  unitPriceRub Int
+  quantity     Int
 
-    products Product[]
-    orderItemOptions OrderItemOption[]
-    
-    orderId Int
-    order Order @relation(fields: [orderId], references: [id])
+  orderItemOptions OrderItemOption[]
+
+  productId Int?
+  orderId   Int
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  order     Order    @relation(fields: [orderId], references: [id])
 }
 
 model OrderItemOption {
-    orderItemId Int
-    modifierId Int
+  id Int @id @default(autoincrement())
 
-    orderItem OrderItem @relation(fields: [orderItemId], references: [id])
-    modifierOption ModifierOption @relation(fields: [modifierId], references: [id])
+  orderItemId      Int
+  modifierOptionId Int?
 
-    @@id([orderItemId, modifierId])
+  modifierName  String
+  optionName    String
+  priceDeltaRub Int
+
+  orderItem      OrderItem       @relation(fields: [orderItemId], references: [id])
+  modifierOption ModifierOption? @relation(fields: [modifierOptionId], references: [id], onDelete: SetNull)
 }

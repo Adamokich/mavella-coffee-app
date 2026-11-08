@@ -24,17 +24,21 @@
     "postinstall": "prisma skills sync || exit 0"
   },
   "dependencies": {
+    "@coffee-app/constants": "file:../../packages/constants",
     "@coffee-app/contracts": "file:../../packages/contracts",
+    "@coffee-app/utils": "file:../../packages/utils",
     "@nestjs/common": "^12.0.1",
     "@nestjs/core": "^12.0.1",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^12.0.1",
     "@prisma/adapter-pg": "^7.10.1",
     "@prisma/client": "^7.10.1",
+    "@standard-schema/spec": "^1.1.0",
     "dotenv": "^17.4.2",
     "pg": "^8.23.1",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@nestjs/cli": "^12.0.0",

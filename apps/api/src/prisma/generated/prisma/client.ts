@@ -66,3 +66,18 @@ export type Modifier = Prisma.ModifierModel
  * 
  */
 export type ModifierOption = Prisma.ModifierOptionModel
+/**
+ * Model Order
+ * 
+ */
+export type Order = Prisma.OrderModel
+/**
+ * Model OrderItem
+ * 
+ */
+export type OrderItem = Prisma.OrderItemModel
+/**
+ * Model OrderItemOption
+ * 
+ */
+export type OrderItemOption = Prisma.OrderItemOptionModel

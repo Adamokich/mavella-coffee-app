@@ -55,7 +55,10 @@ export const ModelName = {
   Product: 'Product',
   ModifierGroup: 'ModifierGroup',
   Modifier: 'Modifier',
-  ModifierOption: 'ModifierOption'
+  ModifierOption: 'ModifierOption',
+  Order: 'Order',
+  OrderItem: 'OrderItem',
+  OrderItemOption: 'OrderItemOption'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -125,11 +128,51 @@ export type ModifierScalarFieldEnum = (typeof ModifierScalarFieldEnum)[keyof typ
 export const ModifierOptionScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  priceDelta: 'priceDelta',
+  priceDeltaRub: 'priceDeltaRub',
   modifierId: 'modifierId'
 } as const
 
 export type ModifierOptionScalarFieldEnum = (typeof ModifierOptionScalarFieldEnum)[keyof typeof ModifierOptionScalarFieldEnum]
+
+
+export const OrderScalarFieldEnum = {
+  id: 'id',
+  idempotencyKey: 'idempotencyKey',
+  requestHash: 'requestHash',
+  customerName: 'customerName',
+  customerPhone: 'customerPhone',
+  comment: 'comment',
+  totalPriceRub: 'totalPriceRub',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
+
+
+export const OrderItemScalarFieldEnum = {
+  id: 'id',
+  productName: 'productName',
+  unitPriceRub: 'unitPriceRub',
+  quantity: 'quantity',
+  productId: 'productId',
+  orderId: 'orderId'
+} as const
+
+export type OrderItemScalarFieldEnum = (typeof OrderItemScalarFieldEnum)[keyof typeof OrderItemScalarFieldEnum]
+
+
+export const OrderItemOptionScalarFieldEnum = {
+  id: 'id',
+  orderItemId: 'orderItemId',
+  modifierOptionId: 'modifierOptionId',
+  modifierName: 'modifierName',
+  optionName: 'optionName',
+  priceDeltaRub: 'priceDeltaRub'
+} as const
+
+export type OrderItemOptionScalarFieldEnum = (typeof OrderItemOptionScalarFieldEnum)[keyof typeof OrderItemOptionScalarFieldEnum]
 
 
 export const SortOrder = {
