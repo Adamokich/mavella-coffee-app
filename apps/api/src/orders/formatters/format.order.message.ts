@@ -32,7 +32,9 @@ export function formatOrderMessage(order: SavedOrderWithItems): string {
     .join('\n\n');
 
   const lines = [
-    `☕ <b>НОВЫЙ ЗАКАЗ #${orderNumber}</b>`,
+    `☕ <b>НОВЫЙ ЗАКАЗ #${orderNumber}</b>
+    
+    `,
     '📍 Самовывоз',
     '',
     '👤 <b>Информация о клиенте</b>',
