@@ -2,6 +2,7 @@
   import { computed, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { vMaska } from 'maska/vue';
+  import { PHONE_NUMBER_REGEX } from '@coffee-app/constants';
   import { useCartStore, getCartItemTotal } from '@/features/cart';
   import {
     useCheckoutStore,
@@ -25,7 +26,7 @@
     return length < 3 || length > 20 ? 'Введите имя длиной от 3 до 20 символов.' : '';
   });
   const phoneError = computed(() =>
-    /^7\d{10}$/.test(customerPhone.value.replace(/\D/g, ''))
+    PHONE_NUMBER_REGEX.test(customerPhone.value.replace(/\D/g, ''))
       ? ''
       : 'Введите номер телефона полностью.',
   );

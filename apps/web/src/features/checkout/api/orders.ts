@@ -1,4 +1,5 @@
 import type { CreateOrderRequest, CreateOrderResponse } from '@coffee-app/contracts';
+import { ORDER_STATUSES } from '@coffee-app/constants';
 import { API_ROUTES, apiClient } from '@/shared/api';
 
 export async function createOrder(payload: CreateOrderRequest): Promise<CreateOrderResponse> {
@@ -8,7 +9,7 @@ export async function createOrder(payload: CreateOrderRequest): Promise<CreateOr
   if (
     !Number.isInteger(data?.id) ||
     !Number.isFinite(data.totalPriceRub) ||
-    !['PENDING', 'READY', 'CANCELLED', 'COMPLETED'].includes(data.status)
+    !ORDER_STATUSES.includes(data.status)
   ) {
     throw new Error('Invalid order response');
   }
