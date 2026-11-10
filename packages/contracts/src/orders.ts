@@ -7,7 +7,7 @@ export interface CreateOrderItem {
 }
 
 export interface CreateOrderRequest {
-  idompotencyKey: string;
+  idempotencyKey: string;
   customerName: string;
   customerPhone: string;
   comment?: string;

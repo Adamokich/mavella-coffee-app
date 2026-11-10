@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -18,5 +18,15 @@ export const router = createRouter({
       name: 'cart',
       component: () => import('@/pages/CartPage.vue'),
     },
+    {
+      path: '/checkout',
+      name: 'checkout',
+      component: () => import('@/pages/CheckoutPage.vue'),
+    },
+    {
+      path: '/order-status',
+      name: 'order-status',
+      component: () => import('@/pages/OrderStatusPage.vue'),
+    },
   ],
-})
+});

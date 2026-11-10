@@ -1,7 +1,12 @@
+<script setup lang="ts">
+  defineProps<{ centered?: boolean }>();
+</script>
+
 <template>
   <svg viewBox="0 0 560 160" role="img" aria-label="Mavella" xmlns="http://www.w3.org/2000/svg">
     <text
-      x="18"
+      :x="centered ? 280 : 18"
+      :text-anchor="centered ? 'middle' : 'start'"
       y="118"
       fill="currentColor"
       font-family="Segoe Script, Brush Script MT, cursive"

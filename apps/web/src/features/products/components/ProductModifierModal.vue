@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed } from 'vue';
+  import { computed, ref, watch } from 'vue';
 
   import type {
     ModifierModalGroup,
@@ -22,7 +22,14 @@
   const props = defineProps<ProductModifierModalProps>();
   const emit = defineEmits<ProductModifierModalEmits>();
 
-  const formattedTotal = computed(() => formatPrice(props.totalRub));
+  const quantity = ref(1);
+  const formattedTotal = computed(() => formatPrice(props.totalRub * quantity.value));
+  watch(
+    () => props.maxQuantity,
+    (max) => {
+      quantity.value = Math.max(1, Math.min(quantity.value, max));
+    },
+  );
 
   function getGroupIcon(group: ModifierModalGroup) {
     const groupName = group.name.toLocaleLowerCase('ru-RU');
@@ -35,7 +42,7 @@
   }
 
   function getOptionPrice(option: ModifierModalOption) {
-    return option.priceDelta > 0 ? `+${formatPrice(option.priceDelta)}` : '';
+    return option.priceDeltaRub > 0 ? `+${formatPrice(option.priceDeltaRub)}` : '';
   }
 
   function getGroupHint(group: ModifierModalGroup) {
@@ -154,6 +161,28 @@
       </div>
 
       <footer class="modifier-modal__footer">
+        <div class="modifier-modal__quantity" aria-label="Количество товара">
+          <button
+            type="button"
+            aria-label="Уменьшить количество"
+            :disabled="quantity <= 1"
+            @click="quantity--"
+          >
+            −
+          </button>
+          <span aria-live="polite">{{ quantity }}</span>
+          <button
+            type="button"
+            aria-label="Увеличить количество"
+            :disabled="quantity >= maxQuantity"
+            @click="quantity++"
+          >
+            +
+          </button>
+        </div>
+        <p v-if="maxQuantity === 0" class="modifier-modal__limit">
+          В корзине уже максимальное количество этой позиции.
+        </p>
         <div class="modifier-modal__total">
           <span>Итого</span>
           <Transition name="modifier-total" mode="out-in">
@@ -166,8 +195,17 @@
         <button
           type="button"
           class="modifier-modal__submit"
-          :disabled="isLoading || Boolean(errorMessage)"
-          @click="emit('submit')"
+          :disabled="
+            isLoading ||
+            maxQuantity === 0 ||
+            Boolean(errorMessage) ||
+            groups.some(
+              (group) =>
+                group.options.filter((option) => option.isSelected).length <
+                (group.minSelections ?? 0),
+            )
+          "
+          @click="emit('submit', quantity)"
         >
           <BasketIcon />
           <span>Добавить в заказ</span>
@@ -518,6 +556,38 @@
     border-top: 1px solid var(--color-border);
   }
 
+  .modifier-modal__quantity {
+    display: flex;
+    grid-column: 1 / -1;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .modifier-modal__quantity button {
+    width: 40px;
+    height: 40px;
+    color: var(--color-accent);
+    background: var(--color-modal-choice);
+    border: 0;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 22px;
+    cursor: pointer;
+  }
+
+  .modifier-modal__quantity button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .modifier-modal__limit {
+    grid-column: 1 / -1;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-secondary);
+    text-align: center;
+  }
+
   .modifier-modal__total {
     display: flex;
     min-width: 76px;
@@ -579,6 +649,7 @@
 
   .modifier-modal__backdrop:focus-visible,
   .modifier-modal__close:focus-visible,
+  .modifier-modal__quantity button:focus-visible,
   .modifier-option:focus-visible,
   .modifier-modal__error button:focus-visible,
   .modifier-modal__submit:focus-visible {

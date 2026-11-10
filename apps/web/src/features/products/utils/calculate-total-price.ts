@@ -5,7 +5,7 @@ export const calculateTotalPrice = (modifierGroups: readonly ModifierModalGroup[
     .flatMap((group) => group.options)
     .reduce((acc, option) => {
       if (option.isSelected) {
-        return acc + option.priceDelta;
+        return acc + option.priceDeltaRub;
       }
 
       return acc;

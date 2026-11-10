@@ -1,15 +1,24 @@
 <script setup lang="ts">
-  import { computed } from 'vue';
+  import { computed, nextTick, ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
+  import { useCartStore } from '@/features/cart';
 
   import { NAVIGATION_ITEMS } from '@/shared/constants';
 
   const route = useRoute();
+  const cartStore = useCartStore();
+  const isDropMoving = ref(false);
 
   const activeNavigationIndex = computed(() => {
     const index = NAVIGATION_ITEMS.findIndex((item) => item.to === route.path);
 
     return index === -1 ? 0 : index;
+  });
+
+  watch(activeNavigationIndex, async () => {
+    isDropMoving.value = false;
+    await nextTick();
+    isDropMoving.value = true;
   });
 </script>
 
@@ -22,7 +31,11 @@
     }"
     aria-label="Основная навигация"
   >
-    <span class="navigation-active-indicator" aria-hidden="true" />
+    <span
+      class="navigation-active-indicator"
+      :class="{ 'navigation-active-indicator--moving': isDropMoving }"
+      aria-hidden="true"
+    />
 
     <RouterLink
       v-for="item in NAVIGATION_ITEMS"
@@ -30,15 +43,28 @@
       :to="item.to"
       class="navigation-link"
     >
-      <component
-        :is="item.icon"
-        class="navigation-icon"
-        :class="{
-          'navigation-icon--active': item.to === route.path,
-          'navigation-icon--favorite': item.to === '/favorites',
-        }"
-      />
-      <span>{{ item.label }}</span>
+      <span class="navigation-icon-wrap">
+        <component
+          :is="item.icon"
+          class="navigation-icon"
+          :class="{
+            'navigation-icon--active': item.to === route.path,
+            'navigation-icon--favorite': item.to === '/favorites',
+          }"
+        />
+        <span
+          v-if="item.to === '/cart' && cartStore.count"
+          class="navigation-count"
+          aria-hidden="true"
+          >{{ cartStore.count }}</span
+        >
+      </span>
+      <span
+        >{{ item.label
+        }}<span v-if="item.to === '/cart' && cartStore.count" class="visually-hidden"
+          >: {{ cartStore.count }} товаров</span
+        ></span
+      >
     </RouterLink>
   </nav>
 </template>
@@ -55,10 +81,27 @@
     overflow: hidden;
     transform: translateX(-50%);
     border: 1px solid var(--color-border);
-    border-radius: 30px;
+    border-radius: 28px;
     background: var(--color-surface-glass);
-    box-shadow: var(--shadow-navigation);
-    backdrop-filter: blur(5px);
+    background:
+      radial-gradient(ellipse at 50% 120%, var(--color-navigation-drop-glow), transparent 58%),
+      linear-gradient(155deg, var(--color-navigation-glass-shine), transparent 38%),
+      var(--color-navigation-glass);
+    box-shadow:
+      inset 0 1px 0 var(--color-navigation-glass-rim),
+      inset 0 -1px 0 var(--color-navigation-active-highlight),
+      var(--shadow-navigation);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    backdrop-filter: blur(20px) saturate(150%);
+  }
+
+  .bottom-navigation::before {
+    position: absolute;
+    inset: 1px;
+    border: 1px solid var(--color-navigation-glass-shine);
+    border-radius: inherit;
+    content: '';
+    pointer-events: none;
   }
 
   .navigation-active-indicator {
@@ -68,20 +111,35 @@
     z-index: 0;
     width: calc((100% - 12px) / var(--navigation-item-count));
     height: calc(100% - 12px);
-    background: var(--color-navigation-active-surface);
+    background:
+      radial-gradient(ellipse at 50% 115%, var(--color-navigation-drop-glow), transparent 60%),
+      linear-gradient(155deg, var(--color-navigation-glass-shine), transparent 42%),
+      var(--color-navigation-drop);
     border: 1px solid var(--color-navigation-active-border);
-    border-radius: 24px;
+    border-radius: 999px;
     box-shadow:
-      inset 0 1px 0 var(--color-navigation-active-highlight),
+      inset 0 2px 2px var(--color-navigation-drop-shine),
+      inset 0 -2px 4px var(--color-navigation-drop-glow),
+      0 0 8px var(--color-navigation-drop-glow),
       var(--shadow-navigation-active);
-    -webkit-backdrop-filter: blur(32px) saturate(180%) brightness(125%);
-    backdrop-filter: blur(32px) saturate(180%) brightness(125%);
     pointer-events: none;
     transform: translateX(calc(var(--active-navigation-index) * 100%));
     transition:
-      transform 560ms cubic-bezier(0.34, 1.42, 0.64, 1),
+      transform 680ms cubic-bezier(0.22, 1, 0.36, 1),
       background-color 360ms ease,
       box-shadow 360ms ease;
+  }
+
+  .navigation-active-indicator::before {
+    position: absolute;
+    inset: 4px 8px 48%;
+    border-radius: 999px 999px 50% 50%;
+    background: linear-gradient(var(--color-navigation-glass-shine), transparent);
+    content: '';
+  }
+
+  .navigation-active-indicator--moving {
+    animation: navigation-drop-move 680ms ease-in-out;
   }
 
   .navigation-link {
@@ -110,8 +168,45 @@
     color: var(--color-accent);
   }
 
+  @media (hover: hover) {
+    .navigation-link:hover {
+      color: var(--color-text);
+    }
+
+    .navigation-link.router-link-exact-active:hover {
+      color: var(--color-accent);
+    }
+  }
+
   .navigation-link.router-link-exact-active .navigation-icon--favorite {
     fill: currentColor;
+  }
+
+  .navigation-icon-wrap {
+    position: relative;
+    display: flex;
+  }
+
+  .navigation-count {
+    position: absolute;
+    top: -6px;
+    left: 18px;
+    min-width: 18px;
+    padding: 1px 4px;
+    color: var(--color-background);
+    background: var(--color-accent);
+    border-radius: 999px;
+    font-size: 11px;
+    line-height: 16px;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
   .navigation-icon {
@@ -146,9 +241,28 @@
     }
   }
 
+  @keyframes navigation-drop-move {
+    0%,
+    100% {
+      scale: 1 1;
+      border-radius: 40px;
+    }
+
+    35% {
+      scale: 1.04 0.96;
+      border-radius: 35px 42px 42px 35px;
+    }
+
+    70% {
+      scale: 0.99 1.01;
+      border-radius: 42px 38px 38px 42px;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .navigation-active-indicator {
       transition: none;
+      animation: none;
     }
 
     .navigation-icon--active {
