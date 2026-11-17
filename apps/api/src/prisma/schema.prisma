@@ -14,6 +14,7 @@ enum ModifierSelectionType {
 
 enum OrderStatus {
   PENDING
+  PREPARING
   CANCELLED
   READY
   COMPLETED
@@ -93,6 +94,7 @@ model Order {
   status        OrderStatus @default(PENDING)
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+  completedAt DateTime?
 
   orderItems OrderItem[]
 }

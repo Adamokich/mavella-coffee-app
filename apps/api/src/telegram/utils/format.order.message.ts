@@ -1,4 +1,4 @@
-import { SavedOrderWithItems } from '../types/order.notififcation.type.js';
+import { SavedOrderWithItems } from '../../orders/types/order.notififcation.type.js';
 
 function escapeHtml(value: string): string {
   return value

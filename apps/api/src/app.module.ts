@@ -6,9 +6,17 @@ import { CatalogModule } from './catalog/catalog.module.js';
 import { ProductModule } from './product/product.module.js';
 import { OrdersModule } from './orders/orders.module.js';
 import { TelegramModule } from './telegram/telegram.module.js';
+import { TelegramUpdateModule } from './telegram/telegram.update.module.js';
 
 @Module({
-  imports: [PrismaModule, CatalogModule, ProductModule, OrdersModule, TelegramModule],
+  imports: [
+    PrismaModule,
+    CatalogModule,
+    ProductModule,
+    OrdersModule,
+    TelegramModule,
+    TelegramUpdateModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
