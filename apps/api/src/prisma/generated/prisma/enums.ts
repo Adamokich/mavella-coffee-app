@@ -19,6 +19,7 @@ export type ModifierSelectionType = (typeof ModifierSelectionType)[keyof typeof 
 
 export const OrderStatus = {
   PENDING: 'PENDING',
+  PREPARING: 'PREPARING',
   CANCELLED: 'CANCELLED',
   READY: 'READY',
   COMPLETED: 'COMPLETED'

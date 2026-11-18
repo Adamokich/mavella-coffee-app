@@ -9,8 +9,8 @@
     type CheckoutItemSummary,
     type PendingSubmission,
   } from '@/features/checkout';
-  import { MavellaLogo } from '@/shared/icons';
-  import { formatPrice } from '@/shared/utils';
+  import { MavellaLogo, WarningIcon } from '@/shared/icons';
+  import { formatPrice, generateUuid } from '@/shared/utils';
 
   const router = useRouter();
   const cart = useCartStore();
@@ -82,7 +82,7 @@
       try {
         submission = {
           payload: {
-            idempotencyKey: crypto.randomUUID(),
+            idempotencyKey: generateUuid(),
             customerName: name.charAt(0).toLocaleUpperCase('ru-RU') + name.slice(1),
             customerPhone: customerPhone.value.replace(/\D/g, ''),
             ...(comment.value.trim() ? { comment: comment.value.trim() } : {}),
@@ -181,35 +181,52 @@
           placeholder="Пожелания к заказу (необязательно)"
         />
       </section>
-      <div v-if="checkout.pending" class="pending-notice" role="status">
+      <div v-if="checkout.pending" class="pending-notice" role="status" aria-live="polite">
+        <h2 class="pending-notice__heading">
+          <WarningIcon class="pending-notice__icon" />
+          Не удалось подтвердить заказ
+        </h2>
         <p>
-          Предыдущая отправка не подтверждена. Повтор будет выполнен с теми же данными и ключом,
-          чтобы не создать дубликат.
+          {{
+            checkout.error ||
+            'Предыдущая отправка не подтверждена. Возможно, заказ уже принят кофейней.'
+          }}
         </p>
         <p v-if="cartChanged">
-          Корзина изменилась. Ниже указан сохранённый заказ; после его подтверждения текущая корзина
+          Корзина изменилась. Выше указан сохранённый заказ, после его подтверждения текущая корзина
           останется.
         </p>
-        <button type="button" :disabled="checkout.isSubmitting" @click="abandonPending">
+        <button class="submit" type="submit" :disabled="checkout.isSubmitting">
+          Повторить отправку
+        </button>
+        <button
+          class="pending-notice__new"
+          type="button"
+          :disabled="checkout.isSubmitting"
+          @click="abandonPending"
+        >
           Начать новый заказ
         </button>
+        <p class="pending-notice__hint">
+          При создании нового заказа предыдущая попытка может остаться в системе.
+        </p>
       </div>
-      <p v-if="formError || checkout.error" class="error" role="alert">
+      <p v-if="!checkout.pending && (formError || checkout.error)" class="error" role="alert">
         {{ formError || checkout.error }}
       </p>
       <button
+        v-if="!checkout.pending"
         class="submit"
         type="submit"
         :disabled="checkout.isSubmitting || (!checkout.pending && !cart.items.length)"
       >
-        {{ checkout.pending ? 'Повторить отправку' : 'Подтвердить заказ' }}
+        Подтвердить заказ
       </button>
     </form>
     <Teleport to="body">
       <div v-if="checkout.isSubmitting" class="loading-overlay" role="status" aria-live="polite">
         <div class="loading-card">
-          <span class="loading-cup" aria-hidden="true">☕</span
-          ><strong>Оформляем ваш заказ...</strong>
+          <strong>Оформляем ваш заказ...</strong>
           <p>Пожалуйста, подождите немного.</p>
           <span class="spinner" aria-hidden="true" />
         </div>
@@ -327,8 +344,36 @@
     color: var(--color-accent);
     font-size: var(--font-size-secondary);
   }
-  .submit,
-  .pending-notice button {
+  .pending-notice__heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--font-size-body);
+  }
+  .pending-notice__icon {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+    color: var(--color-accent);
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-width: 2;
+  }
+  .pending-notice__hint {
+    text-align: center;
+  }
+  .pending-notice__new {
+    min-height: 52px;
+    padding: 0 16px;
+    color: var(--color-accent);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    font: inherit;
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+  }
+  .submit {
     min-height: 52px;
     padding: 0 16px;
     color: var(--color-background);
@@ -379,9 +424,6 @@
   }
   .loading-card p {
     color: var(--color-text-secondary);
-  }
-  .loading-cup {
-    font-size: 40px;
   }
   .spinner {
     width: 32px;

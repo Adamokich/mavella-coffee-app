@@ -53,6 +53,13 @@
         }
       }
 
+      @media (max-width: 639px) {
+        .app-splash__logo-frame,
+        .app-splash__logo {
+          width: min(65vw, 320px);
+        }
+      }
+
       @media (prefers-reduced-motion: reduce) {
         .app-splash__logo-reveal,
         .app-splash--leaving {
@@ -69,23 +76,22 @@
     <div id="app-splash" class="app-splash" aria-hidden="true">
       <div class="app-splash__logo-frame">
         <div class="app-splash__logo-reveal">
-          <svg class="app-splash__logo" viewBox="0 0 560 190" xmlns="http://www.w3.org/2000/svg">
+          <svg class="app-splash__logo" viewBox="420 85 450 175" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="splash-logo-filter" color-interpolation-filters="sRGB">
+                <feColorMatrix
+                  type="matrix"
+                  values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1 1 1 0 -0.24"
+                />
+              </filter>
+              <mask id="splash-logo-mask" maskUnits="userSpaceOnUse" x="420" y="85" width="450" height="135" style="mask-type: alpha">
+                <image href="/src/shared/assets/mavella-logo.jpg" x="0" y="0" width="1280" height="298" filter="url(#splash-logo-filter)" />
+              </mask>
+            </defs>
+            <rect x="420" y="85" width="450" height="135" fill="currentColor" mask="url(#splash-logo-mask)" />
             <text
-              x="280"
-              y="118"
-              fill="currentColor"
-              font-family="Segoe Script, Brush Script MT, cursive"
-              font-size="110"
-              font-style="italic"
-              font-weight="700"
-              letter-spacing="-10"
-              text-anchor="middle"
-            >
-              Mavella
-            </text>
-            <text
-              x="280"
-              y="156"
+              x="645"
+              y="246"
               fill="currentColor"
               font-family="Inter, system-ui, sans-serif"
               font-size="18"

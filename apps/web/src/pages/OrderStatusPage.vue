@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { computed } from 'vue';
   import { useCheckoutStore } from '@/features/checkout';
-  import { MavellaLogo } from '@/shared/icons';
+  import { MavellaLogo, PendingOrderIcon } from '@/shared/icons';
   import { formatPrice } from '@/shared/utils';
 
   const checkout = useCheckoutStore();
@@ -25,7 +25,10 @@
   <section class="status-page">
     <MavellaLogo class="logo" centered />
     <template v-if="checkout.confirmation">
-      <div class="status-icon" aria-hidden="true">✓</div>
+      <PendingOrderIcon v-if="checkout.confirmation.status === 'PENDING'" class="status-pending-icon" />
+      <div v-else class="status-icon" aria-hidden="true">
+        {{ checkout.confirmation.status === 'CANCELLED' ? '×' : '✓' }}
+      </div>
       <h1>Заказ отправлен!</h1>
       <p class="status-message">{{ statusText }}</p>
       <dl class="order-info">
@@ -75,6 +78,18 @@
     background: var(--color-accent);
     border-radius: 50%;
     font-size: 42px;
+  }
+  .status-pending-icon {
+    width: 84px;
+    height: 84px;
+    padding: 4px;
+    color: var(--color-accent);
+    background: var(--color-surface);
+    border-radius: 22px;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 3;
   }
   .status-message {
     color: var(--color-text-secondary);

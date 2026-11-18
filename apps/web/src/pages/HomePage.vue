@@ -142,7 +142,7 @@
     <section class="home-page" aria-labelledby="catalog-heading">
       <header class="catalog-header">
         <div class="catalog-intro">
-          <MavellaLogo class="brand-logo" />
+          <MavellaLogo class="brand-logo" centered />
           <p class="greeting">Добро пожаловать</p>
 
           <h1 id="catalog-heading" class="catalog-title">Наш каталог</h1>
@@ -325,6 +325,7 @@
   .brand-logo {
     width: 230px;
     height: auto;
+    align-self: center;
     color: var(--color-accent);
   }
 

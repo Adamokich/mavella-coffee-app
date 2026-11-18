@@ -3,9 +3,10 @@ import {
   ConflictException,
   Injectable,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
-import { Prisma } from '../prisma/generated/prisma/client.js';
+import { OrderStatus, Prisma } from '../prisma/generated/prisma/client.js';
 import type { CreateOrderSchema } from './dto/create-order.schema.js';
 import type {
   CreateOrderItem,
@@ -15,7 +16,7 @@ import type {
 import { createHash } from 'node:crypto';
 import { TelegramService } from '../telegram/telegram.service.js';
 import { SavedOrderWithItems } from './types/order.notififcation.type.js';
-import { formatOrderMessage } from './formatters/format.order.message.js';
+import { formatOrderMessage } from '../telegram/utils/format.order.message.js';
 
 const productInclude = {
   modifiers: {
@@ -28,6 +29,14 @@ const productInclude = {
     },
   },
 } satisfies Prisma.ProductInclude;
+
+const orderItemsInclude = {
+  orderItems: {
+    include: {
+      orderItemOptions: true,
+    },
+  },
+} satisfies Prisma.OrderInclude;
 
 type ProductWithModifiers = Prisma.ProductGetPayload<{
   include: typeof productInclude;
@@ -300,11 +309,140 @@ export class OrdersService {
     try {
       const message = formatOrderMessage(order);
 
-      this.telegramService.sendMessage(message);
+      this.telegramService.sendOrderNotification(order.id, message);
     } catch (error: unknown) {
       this.logger.warn(
         `Не удалось отправить уведомление о заказе #${order.id}`,
       );
     }
+  }
+
+  async acceptOrder(orderId: number) {
+    return this.changeOrderStatus(orderId, 'PENDING', 'PREPARING');
+  }
+
+  async rejectOrder(orderId: number) {
+    return this.changeOrderStatus(orderId, 'PENDING', 'CANCELLED');
+  }
+
+  async markOrderReady(orderId: number) {
+    return this.changeOrderStatus(orderId, 'PREPARING', 'READY');
+  }
+
+  async markOrderCompleted(orderId: number) {
+    return this.changeOrderStatus(orderId, 'READY', 'COMPLETED');
+  }
+
+  private async changeOrderStatus(
+    orderId: number,
+    expectedStatus: OrderStatus,
+    newStatus: OrderStatus,
+  ) {
+    const result = await this.prismaService.order.updateMany({
+      where: { id: orderId, status: expectedStatus },
+      data: {
+        status: newStatus,
+        ...(newStatus === 'COMPLETED' && { createdAt: new Date() }),
+      },
+    });
+
+    if (result.count === 0) {
+      const order = await this.prismaService.order.findUnique({
+        where: { id: orderId },
+        select: { id: true },
+      });
+
+      if (!order) {
+        throw new NotFoundException('Заказ с таким номером не найден');
+      }
+
+      throw new ConflictException('Заказ уже обработан или не существует');
+    }
+
+    return { success: true, orderId, status: newStatus };
+  }
+
+  async getOrderNotificationMessage(orderId: number) {
+    const order = await this.prismaService.order.findUnique({
+      where: { id: orderId },
+      include: orderItemsInclude,
+    });
+
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+
+    return formatOrderMessage(order);
+  }
+
+  async getOrderStats(): Promise<[OrderStatus, number][]> {
+    const counts = new Map<OrderStatus, number>([
+      ['PENDING', 0],
+      ['PREPARING', 0],
+      ['READY', 0],
+    ]);
+
+    const ordersStatusGroup = await this.prismaService.order.groupBy({
+      by: ['status'],
+      where: {
+        status: {
+          in: ['PREPARING', 'READY', 'PENDING'],
+        },
+      },
+      _count: {
+        _all: true,
+      },
+    });
+
+    for (const group of ordersStatusGroup) {
+      counts.set(group.status, group._count._all);
+    }
+
+    return [...counts];
+  }
+
+  async getOrderByStatus(status: OrderStatus, page: number = 1) {
+    if (!Number.isSafeInteger(page) || page < 1) {
+      throw new BadRequestException('Некорректный номер страницы');
+    }
+
+    const total = await this.prismaService.order.count({
+      where: { status },
+    });
+
+    const totalPages = Math.ceil(total / 5);
+
+    const result = await this.prismaService.order.findMany({
+      where: {
+        status,
+      },
+      orderBy: [{ id: 'asc' }, { createdAt: 'asc' }],
+      select: {
+        createdAt: true,
+        id: true,
+      },
+      take: 5,
+      skip: (page - 1) * 5,
+    });
+
+    return {
+      orders: result,
+      page,
+      total,
+      totalPages,
+    };
+  }
+
+  async getStatusByOrderId(orderId: number): Promise<OrderStatus> {
+    const orderStatus = await this.prismaService.order.findUnique({
+      where: { id: orderId },
+      select: { status: true },
+    });
+
+    if (!orderStatus) {
+      throw new NotFoundException('Заказ с таким номером не найден');
+    }
+
+    return orderStatus.status;
   }
 }

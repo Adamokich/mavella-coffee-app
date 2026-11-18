@@ -2,6 +2,7 @@
   import { computed } from 'vue';
 
   import { useFavoritesStore } from '@/features/favorites';
+  import { MavellaLogo } from '@/shared/icons';
   import {
     CatalogSkeleton,
     ProductCard,
@@ -21,6 +22,7 @@
   <CatalogProvider v-slot="{ openModal }">
     <section class="favorites-page" aria-labelledby="favorites-heading">
       <header class="favorites-header">
+        <MavellaLogo class="favorites-logo" centered />
         <h1 id="favorites-heading">Избранное</h1>
         <p>Ваши любимые напитки</p>
       </header>
@@ -71,6 +73,13 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+  }
+
+  .favorites-logo {
+    width: min(230px, 100%);
+    height: auto;
+    align-self: center;
+    color: var(--color-accent);
   }
 
   .favorites-header p,

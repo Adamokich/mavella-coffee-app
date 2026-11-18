@@ -145,7 +145,8 @@ export const OrderScalarFieldEnum = {
   totalPriceRub: 'totalPriceRub',
   status: 'status',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  completedAt: 'completedAt'
 } as const
 
 export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
