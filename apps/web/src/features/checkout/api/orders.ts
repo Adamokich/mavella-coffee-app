@@ -1,6 +1,11 @@
-import type { CreateOrderRequest, CreateOrderResponse } from '@coffee-app/contracts';
-import { ORDER_STATUSES } from '@coffee-app/constants';
+import {
+  OrderStatus,
+  type CreateOrderRequest,
+  type CreateOrderResponse,
+} from '@coffee-app/contracts/orders';
 import { API_ROUTES, apiClient } from '@/shared/api';
+
+const orderStatuses = Object.values(OrderStatus);
 
 export async function createOrder(payload: CreateOrderRequest): Promise<CreateOrderResponse> {
   const { data } = await apiClient.post<CreateOrderResponse>(API_ROUTES.orders, payload, {
@@ -9,9 +14,14 @@ export async function createOrder(payload: CreateOrderRequest): Promise<CreateOr
   if (
     !Number.isInteger(data?.id) ||
     !Number.isFinite(data.totalPriceRub) ||
-    !ORDER_STATUSES.includes(data.status)
+    !orderStatuses.includes(data.status)
   ) {
     throw new Error('Invalid order response');
   }
-  return { id: data.id, status: data.status, totalPriceRub: data.totalPriceRub };
+  return {
+    id: data.id,
+    status: data.status,
+    totalPriceRub: data.totalPriceRub,
+    trackingToken: data.trackingToken,
+  };
 }

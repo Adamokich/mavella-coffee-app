@@ -1,4 +1,6 @@
-export type OrderStatus = "PENDING" | "READY" | "CANCELLED" | "COMPLETED";
+import { OrderStatus } from "../../../apps/api/src/prisma/generated/prisma/enums.js";
+
+export { OrderStatus };
 
 export interface CreateOrderItem {
   productId: number;
@@ -18,4 +20,5 @@ export interface CreateOrderResponse {
   id: number;
   status: OrderStatus;
   totalPriceRub: number;
+  trackingToken: string;
 }

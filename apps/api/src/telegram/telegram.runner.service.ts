@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { Context, Telegraf } from 'telegraf';
 import { TELEGRAM_BOT } from './telegram.constants.js';
+import { getTrackingToken } from '../orders/utils/tracking-token.js';
 
 @Injectable()
 export class TelegramRunnerService

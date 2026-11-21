@@ -2,21 +2,31 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  InternalServerErrorException,
   Logger,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
-import { OrderStatus, Prisma } from '../prisma/generated/prisma/client.js';
+import crypto from 'node:crypto';
+import {
+  Order,
+  OrderStatus,
+  Prisma,
+} from '../prisma/generated/prisma/client.js';
 import type { CreateOrderSchema } from './dto/create-order.schema.js';
 import type {
   CreateOrderItem,
   CalculatedOrderItem,
   CalculatedOrder,
+  CreateOrderResponse,
 } from '@coffee-app/contracts';
 import { createHash } from 'node:crypto';
 import { TelegramService } from '../telegram/telegram.service.js';
-import { SavedOrderWithItems } from './types/order.notififcation.type.js';
+import { OrderStatusPayload, SavedOrderWithItems } from './types/order.type.js';
 import { formatOrderMessage } from '../telegram/utils/format.order.message.js';
+import { getTrackingToken } from './utils/tracking-token.js';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 const productInclude = {
   modifiers: {
@@ -47,28 +57,50 @@ export class OrdersService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly telegramService: TelegramService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   private readonly logger = new Logger();
 
-  async createOrder(dto: CreateOrderSchema) {
+  async createOrder(dto: CreateOrderSchema): Promise<CreateOrderResponse> {
     const requestHash = this.createRequestHash(dto);
+    const { trackingToken, trackingTokenHash } = getTrackingToken(
+      dto.idempotencyKey,
+    );
 
-    const existingOrder = await this.prismaService.order.findUnique({
-      where: {
-        idempotencyKey: dto.idempotencyKey,
-      },
+    const buildResponse = (order: Order): CreateOrderResponse => ({
+      id: order.id,
+      status: order.status,
+      totalPriceRub: order.totalPriceRub,
+      trackingToken,
     });
 
-    if (existingOrder) {
-      if (existingOrder.requestHash === requestHash) {
-        return existingOrder;
+    const resolveExistingOrder = async (conflictMessage: string) => {
+      const existingOrder = await this.prismaService.order.findUnique({
+        where: { idempotencyKey: dto.idempotencyKey },
+      });
+
+      if (!existingOrder) return null;
+
+      if (existingOrder.requestHash !== requestHash) {
+        throw new ConflictException(conflictMessage);
       }
 
-      throw new ConflictException(
-        'Запрос с таким ключом идемпотентности уже обрабатывается или был обработан',
-      );
-    }
+      if (existingOrder.trackingTokenHash !== trackingTokenHash) {
+        this.logger.error(
+          `Tracking token hash mismatch for order ${existingOrder.id}`,
+        );
+        throw new InternalServerErrorException();
+      }
+
+      return buildResponse(existingOrder);
+    };
+
+    const cachedResponse = await resolveExistingOrder(
+      'Запрос с таким ключом идемпотентности уже обрабатывается или был обработан',
+    );
+
+    if (cachedResponse) return cachedResponse;
 
     const products = await this.loadProducts(dto.items);
     const productsMap = new Map<number, ProductWithModifiers>(
@@ -76,15 +108,21 @@ export class OrdersService {
     );
 
     this.validateOrderItems(dto.items, productsMap);
-
     const calculatedOrder = this.calculateOrder(dto.items, productsMap);
 
     try {
-      const order = await this.saveOrder(dto, calculatedOrder, requestHash);
+      const order = await this.saveOrder(
+        dto,
+        calculatedOrder,
+        requestHash,
+        trackingTokenHash,
+      );
+
+      console.log(trackingToken);
 
       await this.notifyAboutOrder(order);
 
-      return order;
+      return buildResponse(order);
     } catch (error: unknown) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -92,23 +130,60 @@ export class OrdersService {
         Array.isArray(error.meta?.target) &&
         error.meta?.target.includes('idempotencyKey')
       ) {
-        const existingOrder = await this.prismaService.order.findUnique({
-          where: { idempotencyKey: dto.idempotencyKey },
-        });
+        const raceResponse = await resolveExistingOrder(
+          'Ключ идемпотентности уже использован для другого заказа',
+        );
 
-        if (existingOrder) {
-          if (existingOrder.requestHash === requestHash) {
-            return existingOrder;
-          }
-
-          throw new ConflictException(
-            'Ключ идемпотентности уже использован для другого заказа',
-          );
-        }
+        if (raceResponse) return raceResponse;
       }
 
       throw error;
     }
+  }
+
+  private async saveOrder(
+    dto: CreateOrderSchema,
+    calculateOrder: CalculatedOrder,
+    requestHash: string,
+    trackingTokenHash: string,
+  ) {
+    const order = await this.prismaService.order.create({
+      data: {
+        idempotencyKey: dto.idempotencyKey,
+        requestHash,
+        trackingTokenHash,
+        customerName: dto.customerName,
+        customerPhone: dto.customerPhone,
+        comment: dto.comment,
+        totalPriceRub: calculateOrder.totalPriceRub,
+        orderItems: {
+          create: calculateOrder.items.map((item) => ({
+            productName: item.productName,
+            unitPriceRub: item.unitPriceRub,
+            quantity: item.quantity,
+            product: {
+              connect: { id: item.productId },
+            },
+            orderItemOptions: {
+              create: item.options.map((option) => ({
+                modifierName: option.modifierName,
+                optionName: option.optionName,
+                priceDeltaRub: option.priceDeltaRub,
+              })),
+            },
+          })),
+        },
+      },
+      include: {
+        orderItems: {
+          include: {
+            orderItemOptions: true,
+          },
+        },
+      },
+    });
+
+    return order;
   }
 
   private async loadProducts(items: CreateOrderItem[]) {
@@ -262,54 +337,11 @@ export class OrdersService {
     return createHash('sha256').update(orderItemJSON).digest('hex');
   }
 
-  private async saveOrder(
-    dto: CreateOrderSchema,
-    calculateOrder: CalculatedOrder,
-    requestHash: string,
-  ) {
-    const order = await this.prismaService.order.create({
-      data: {
-        idempotencyKey: dto.idempotencyKey,
-        requestHash,
-        customerName: dto.customerName,
-        customerPhone: dto.customerPhone,
-        comment: dto.comment,
-        totalPriceRub: calculateOrder.totalPriceRub,
-        orderItems: {
-          create: calculateOrder.items.map((item) => ({
-            productName: item.productName,
-            unitPriceRub: item.unitPriceRub,
-            quantity: item.quantity,
-            product: {
-              connect: { id: item.productId },
-            },
-            orderItemOptions: {
-              create: item.options.map((option) => ({
-                modifierName: option.modifierName,
-                optionName: option.optionName,
-                priceDeltaRub: option.priceDeltaRub,
-              })),
-            },
-          })),
-        },
-      },
-      include: {
-        orderItems: {
-          include: {
-            orderItemOptions: true,
-          },
-        },
-      },
-    });
-
-    return order;
-  }
-
   private async notifyAboutOrder(order: SavedOrderWithItems): Promise<void> {
     try {
       const message = formatOrderMessage(order);
 
-      this.telegramService.sendOrderNotification(order.id, message);
+      await this.telegramService.sendOrderNotification(order.id, message);
     } catch (error: unknown) {
       this.logger.warn(
         `Не удалось отправить уведомление о заказе #${order.id}`,
@@ -338,15 +370,20 @@ export class OrdersService {
     expectedStatus: OrderStatus,
     newStatus: OrderStatus,
   ) {
-    const result = await this.prismaService.order.updateMany({
+    const result = await this.prismaService.order.updateManyAndReturn({
       where: { id: orderId, status: expectedStatus },
       data: {
         status: newStatus,
-        ...(newStatus === 'COMPLETED' && { createdAt: new Date() }),
+        ...(newStatus === 'COMPLETED' && { completedAt: new Date() }),
+        version: { increment: 1 },
+      },
+      select: {
+        version: true,
+        status: true,
       },
     });
 
-    if (result.count === 0) {
+    if (result.length === 0) {
       const order = await this.prismaService.order.findUnique({
         where: { id: orderId },
         select: { id: true },
@@ -359,7 +396,20 @@ export class OrdersService {
       throw new ConflictException('Заказ уже обработан или не существует');
     }
 
-    return { success: true, orderId, status: newStatus };
+    const { status, version } = result[0];
+
+    this.eventEmitter.emit('order.status.changed', {
+      orderId,
+      status,
+      version,
+    });
+
+    return {
+      success: true,
+      orderId,
+      status,
+      version,
+    };
   }
 
   async getOrderNotificationMessage(orderId: number) {
@@ -444,5 +494,50 @@ export class OrdersService {
     }
 
     return orderStatus.status;
+  }
+
+  async getOrderStatus(
+    orderId: number,
+    trackingToken: string | undefined,
+  ): Promise<OrderStatusPayload> {
+    if (!trackingToken) {
+      throw new UnauthorizedException('Во входящем запросе отсутствует токен');
+    }
+
+    const order = await this.prismaService.order.findUnique({
+      where: { id: orderId },
+      select: {
+        id: true,
+        trackingTokenHash: true,
+        status: true,
+        version: true,
+      },
+    });
+
+    if (!order) {
+      throw new NotFoundException(
+        `Не удалось получить данные о заказе или статусе`,
+      );
+    }
+
+    const incomingTokenHash = crypto
+      .createHash('sha256')
+      .update(trackingToken)
+      .digest('hex');
+
+    const storedHashBuffer = Buffer.from(order.trackingTokenHash, 'hex');
+    const incomingHashBuffer = Buffer.from(incomingTokenHash, 'hex');
+
+    const isValid =
+      storedHashBuffer.length === incomingHashBuffer.length &&
+      crypto.timingSafeEqual(incomingHashBuffer, storedHashBuffer);
+
+    if (!isValid) {
+      throw new NotFoundException(
+        `Не удалось получить данные о заказе или статусе`,
+      );
+    }
+
+    return { orderId: order.id, status: order.status, version: order.version };
   }
 }

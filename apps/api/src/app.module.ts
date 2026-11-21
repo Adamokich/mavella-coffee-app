@@ -7,6 +7,8 @@ import { ProductModule } from './product/product.module.js';
 import { OrdersModule } from './orders/orders.module.js';
 import { TelegramModule } from './telegram/telegram.module.js';
 import { TelegramUpdateModule } from './telegram/telegram.update.module.js';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -16,6 +18,16 @@ import { TelegramUpdateModule } from './telegram/telegram.update.module.js';
     OrdersModule,
     TelegramModule,
     TelegramUpdateModule,
+    EventEmitterModule.forRoot(),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          name: 'long',
+          ttl: 60000,
+          limit: 10,
+        },
+      ],
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

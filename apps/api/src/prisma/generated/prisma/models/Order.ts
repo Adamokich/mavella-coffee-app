@@ -29,17 +29,20 @@ export type AggregateOrder = {
 export type OrderAvgAggregateOutputType = {
   id: number | null
   totalPriceRub: number | null
+  version: number | null
 }
 
 export type OrderSumAggregateOutputType = {
   id: number | null
   totalPriceRub: number | null
+  version: number | null
 }
 
 export type OrderMinAggregateOutputType = {
   id: number | null
   idempotencyKey: string | null
   requestHash: string | null
+  trackingTokenHash: string | null
   customerName: string | null
   customerPhone: string | null
   comment: string | null
@@ -48,12 +51,14 @@ export type OrderMinAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   completedAt: Date | null
+  version: number | null
 }
 
 export type OrderMaxAggregateOutputType = {
   id: number | null
   idempotencyKey: string | null
   requestHash: string | null
+  trackingTokenHash: string | null
   customerName: string | null
   customerPhone: string | null
   comment: string | null
@@ -62,12 +67,14 @@ export type OrderMaxAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   completedAt: Date | null
+  version: number | null
 }
 
 export type OrderCountAggregateOutputType = {
   id: number
   idempotencyKey: number
   requestHash: number
+  trackingTokenHash: number
   customerName: number
   customerPhone: number
   comment: number
@@ -76,6 +83,7 @@ export type OrderCountAggregateOutputType = {
   createdAt: number
   updatedAt: number
   completedAt: number
+  version: number
   _all: number
 }
 
@@ -83,17 +91,20 @@ export type OrderCountAggregateOutputType = {
 export type OrderAvgAggregateInputType = {
   id?: true
   totalPriceRub?: true
+  version?: true
 }
 
 export type OrderSumAggregateInputType = {
   id?: true
   totalPriceRub?: true
+  version?: true
 }
 
 export type OrderMinAggregateInputType = {
   id?: true
   idempotencyKey?: true
   requestHash?: true
+  trackingTokenHash?: true
   customerName?: true
   customerPhone?: true
   comment?: true
@@ -102,12 +113,14 @@ export type OrderMinAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   completedAt?: true
+  version?: true
 }
 
 export type OrderMaxAggregateInputType = {
   id?: true
   idempotencyKey?: true
   requestHash?: true
+  trackingTokenHash?: true
   customerName?: true
   customerPhone?: true
   comment?: true
@@ -116,12 +129,14 @@ export type OrderMaxAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   completedAt?: true
+  version?: true
 }
 
 export type OrderCountAggregateInputType = {
   id?: true
   idempotencyKey?: true
   requestHash?: true
+  trackingTokenHash?: true
   customerName?: true
   customerPhone?: true
   comment?: true
@@ -130,6 +145,7 @@ export type OrderCountAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   completedAt?: true
+  version?: true
   _all?: true
 }
 
@@ -223,6 +239,7 @@ export type OrderGroupByOutputType = {
   id: number
   idempotencyKey: string
   requestHash: string
+  trackingTokenHash: string
   customerName: string
   customerPhone: string
   comment: string | null
@@ -231,6 +248,7 @@ export type OrderGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   completedAt: Date | null
+  version: number
   _count: OrderCountAggregateOutputType | null
   _avg: OrderAvgAggregateOutputType | null
   _sum: OrderSumAggregateOutputType | null
@@ -260,6 +278,7 @@ export type OrderWhereInput = {
   id?: Prisma.IntFilter<"Order"> | number
   idempotencyKey?: Prisma.StringFilter<"Order"> | string
   requestHash?: Prisma.StringFilter<"Order"> | string
+  trackingTokenHash?: Prisma.StringFilter<"Order"> | string
   customerName?: Prisma.StringFilter<"Order"> | string
   customerPhone?: Prisma.StringFilter<"Order"> | string
   comment?: Prisma.StringNullableFilter<"Order"> | string | null
@@ -268,6 +287,7 @@ export type OrderWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   completedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  version?: Prisma.IntFilter<"Order"> | number
   orderItems?: Prisma.OrderItemListRelationFilter
 }
 
@@ -275,6 +295,7 @@ export type OrderOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   idempotencyKey?: Prisma.SortOrder
   requestHash?: Prisma.SortOrder
+  trackingTokenHash?: Prisma.SortOrder
   customerName?: Prisma.SortOrder
   customerPhone?: Prisma.SortOrder
   comment?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -283,12 +304,14 @@ export type OrderOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  version?: Prisma.SortOrder
   orderItems?: Prisma.OrderItemOrderByRelationAggregateInput
 }
 
 export type OrderWhereUniqueInput = Prisma.AtLeast<{
   id?: number
   idempotencyKey?: string
+  trackingTokenHash?: string
   AND?: Prisma.OrderWhereInput | Prisma.OrderWhereInput[]
   OR?: Prisma.OrderWhereInput[]
   NOT?: Prisma.OrderWhereInput | Prisma.OrderWhereInput[]
@@ -301,13 +324,15 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   completedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  version?: Prisma.IntFilter<"Order"> | number
   orderItems?: Prisma.OrderItemListRelationFilter
-}, "id" | "idempotencyKey">
+}, "id" | "idempotencyKey" | "trackingTokenHash">
 
 export type OrderOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   idempotencyKey?: Prisma.SortOrder
   requestHash?: Prisma.SortOrder
+  trackingTokenHash?: Prisma.SortOrder
   customerName?: Prisma.SortOrder
   customerPhone?: Prisma.SortOrder
   comment?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -316,6 +341,7 @@ export type OrderOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  version?: Prisma.SortOrder
   _count?: Prisma.OrderCountOrderByAggregateInput
   _avg?: Prisma.OrderAvgOrderByAggregateInput
   _max?: Prisma.OrderMaxOrderByAggregateInput
@@ -330,6 +356,7 @@ export type OrderScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"Order"> | number
   idempotencyKey?: Prisma.StringWithAggregatesFilter<"Order"> | string
   requestHash?: Prisma.StringWithAggregatesFilter<"Order"> | string
+  trackingTokenHash?: Prisma.StringWithAggregatesFilter<"Order"> | string
   customerName?: Prisma.StringWithAggregatesFilter<"Order"> | string
   customerPhone?: Prisma.StringWithAggregatesFilter<"Order"> | string
   comment?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
@@ -338,11 +365,13 @@ export type OrderScalarWhereWithAggregatesInput = {
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
   completedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+  version?: Prisma.IntWithAggregatesFilter<"Order"> | number
 }
 
 export type OrderCreateInput = {
   idempotencyKey: string
   requestHash: string
+  trackingTokenHash: string
   customerName: string
   customerPhone: string
   comment?: string | null
@@ -351,6 +380,7 @@ export type OrderCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   completedAt?: Date | string | null
+  version?: number
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutOrderInput
 }
 
@@ -358,6 +388,7 @@ export type OrderUncheckedCreateInput = {
   id?: number
   idempotencyKey: string
   requestHash: string
+  trackingTokenHash: string
   customerName: string
   customerPhone: string
   comment?: string | null
@@ -366,12 +397,14 @@ export type OrderUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   completedAt?: Date | string | null
+  version?: number
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUpdateInput = {
   idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
   requestHash?: Prisma.StringFieldUpdateOperationsInput | string
+  trackingTokenHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -380,6 +413,7 @@ export type OrderUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
   orderItems?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput
 }
 
@@ -387,6 +421,7 @@ export type OrderUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
   requestHash?: Prisma.StringFieldUpdateOperationsInput | string
+  trackingTokenHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -395,6 +430,7 @@ export type OrderUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
 }
 
@@ -402,6 +438,7 @@ export type OrderCreateManyInput = {
   id?: number
   idempotencyKey: string
   requestHash: string
+  trackingTokenHash: string
   customerName: string
   customerPhone: string
   comment?: string | null
@@ -410,11 +447,13 @@ export type OrderCreateManyInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   completedAt?: Date | string | null
+  version?: number
 }
 
 export type OrderUpdateManyMutationInput = {
   idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
   requestHash?: Prisma.StringFieldUpdateOperationsInput | string
+  trackingTokenHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -423,12 +462,14 @@ export type OrderUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type OrderUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
   requestHash?: Prisma.StringFieldUpdateOperationsInput | string
+  trackingTokenHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -437,12 +478,14 @@ export type OrderUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type OrderCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   idempotencyKey?: Prisma.SortOrder
   requestHash?: Prisma.SortOrder
+  trackingTokenHash?: Prisma.SortOrder
   customerName?: Prisma.SortOrder
   customerPhone?: Prisma.SortOrder
   comment?: Prisma.SortOrder
@@ -451,17 +494,20 @@ export type OrderCountOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  version?: Prisma.SortOrder
 }
 
 export type OrderAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   totalPriceRub?: Prisma.SortOrder
+  version?: Prisma.SortOrder
 }
 
 export type OrderMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   idempotencyKey?: Prisma.SortOrder
   requestHash?: Prisma.SortOrder
+  trackingTokenHash?: Prisma.SortOrder
   customerName?: Prisma.SortOrder
   customerPhone?: Prisma.SortOrder
   comment?: Prisma.SortOrder
@@ -470,12 +516,14 @@ export type OrderMaxOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  version?: Prisma.SortOrder
 }
 
 export type OrderMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   idempotencyKey?: Prisma.SortOrder
   requestHash?: Prisma.SortOrder
+  trackingTokenHash?: Prisma.SortOrder
   customerName?: Prisma.SortOrder
   customerPhone?: Prisma.SortOrder
   comment?: Prisma.SortOrder
@@ -484,11 +532,13 @@ export type OrderMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  version?: Prisma.SortOrder
 }
 
 export type OrderSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   totalPriceRub?: Prisma.SortOrder
+  version?: Prisma.SortOrder
 }
 
 export type OrderScalarRelationFilter = {
@@ -521,6 +571,7 @@ export type OrderUpdateOneRequiredWithoutOrderItemsNestedInput = {
 export type OrderCreateWithoutOrderItemsInput = {
   idempotencyKey: string
   requestHash: string
+  trackingTokenHash: string
   customerName: string
   customerPhone: string
   comment?: string | null
@@ -529,12 +580,14 @@ export type OrderCreateWithoutOrderItemsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   completedAt?: Date | string | null
+  version?: number
 }
 
 export type OrderUncheckedCreateWithoutOrderItemsInput = {
   id?: number
   idempotencyKey: string
   requestHash: string
+  trackingTokenHash: string
   customerName: string
   customerPhone: string
   comment?: string | null
@@ -543,6 +596,7 @@ export type OrderUncheckedCreateWithoutOrderItemsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   completedAt?: Date | string | null
+  version?: number
 }
 
 export type OrderCreateOrConnectWithoutOrderItemsInput = {
@@ -564,6 +618,7 @@ export type OrderUpdateToOneWithWhereWithoutOrderItemsInput = {
 export type OrderUpdateWithoutOrderItemsInput = {
   idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
   requestHash?: Prisma.StringFieldUpdateOperationsInput | string
+  trackingTokenHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -572,12 +627,14 @@ export type OrderUpdateWithoutOrderItemsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type OrderUncheckedUpdateWithoutOrderItemsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
   requestHash?: Prisma.StringFieldUpdateOperationsInput | string
+  trackingTokenHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -586,6 +643,7 @@ export type OrderUncheckedUpdateWithoutOrderItemsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
@@ -623,6 +681,7 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   id?: boolean
   idempotencyKey?: boolean
   requestHash?: boolean
+  trackingTokenHash?: boolean
   customerName?: boolean
   customerPhone?: boolean
   comment?: boolean
@@ -631,6 +690,7 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   createdAt?: boolean
   updatedAt?: boolean
   completedAt?: boolean
+  version?: boolean
   orderItems?: boolean | Prisma.Order$orderItemsArgs<ExtArgs>
   _count?: boolean | Prisma.OrderCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["order"]>
@@ -639,6 +699,7 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   id?: boolean
   idempotencyKey?: boolean
   requestHash?: boolean
+  trackingTokenHash?: boolean
   customerName?: boolean
   customerPhone?: boolean
   comment?: boolean
@@ -647,12 +708,14 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   createdAt?: boolean
   updatedAt?: boolean
   completedAt?: boolean
+  version?: boolean
 }, ExtArgs["result"]["order"]>
 
 export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   idempotencyKey?: boolean
   requestHash?: boolean
+  trackingTokenHash?: boolean
   customerName?: boolean
   customerPhone?: boolean
   comment?: boolean
@@ -661,12 +724,14 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   createdAt?: boolean
   updatedAt?: boolean
   completedAt?: boolean
+  version?: boolean
 }, ExtArgs["result"]["order"]>
 
 export type OrderSelectScalar = {
   id?: boolean
   idempotencyKey?: boolean
   requestHash?: boolean
+  trackingTokenHash?: boolean
   customerName?: boolean
   customerPhone?: boolean
   comment?: boolean
@@ -675,9 +740,10 @@ export type OrderSelectScalar = {
   createdAt?: boolean
   updatedAt?: boolean
   completedAt?: boolean
+  version?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "idempotencyKey" | "requestHash" | "customerName" | "customerPhone" | "comment" | "totalPriceRub" | "status" | "createdAt" | "updatedAt" | "completedAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "idempotencyKey" | "requestHash" | "trackingTokenHash" | "customerName" | "customerPhone" | "comment" | "totalPriceRub" | "status" | "createdAt" | "updatedAt" | "completedAt" | "version", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   orderItems?: boolean | Prisma.Order$orderItemsArgs<ExtArgs>
   _count?: boolean | Prisma.OrderCountOutputTypeDefaultArgs<ExtArgs>
@@ -694,6 +760,7 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     id: number
     idempotencyKey: string
     requestHash: string
+    trackingTokenHash: string
     customerName: string
     customerPhone: string
     comment: string | null
@@ -702,6 +769,7 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     createdAt: Date
     updatedAt: Date
     completedAt: Date | null
+    version: number
   }, ExtArgs["result"]["order"]>
   composites: {}
 }
@@ -1129,6 +1197,7 @@ export interface OrderFieldRefs {
   readonly id: Prisma.FieldRef<"Order", 'Int'>
   readonly idempotencyKey: Prisma.FieldRef<"Order", 'String'>
   readonly requestHash: Prisma.FieldRef<"Order", 'String'>
+  readonly trackingTokenHash: Prisma.FieldRef<"Order", 'String'>
   readonly customerName: Prisma.FieldRef<"Order", 'String'>
   readonly customerPhone: Prisma.FieldRef<"Order", 'String'>
   readonly comment: Prisma.FieldRef<"Order", 'String'>
@@ -1137,6 +1206,7 @@ export interface OrderFieldRefs {
   readonly createdAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly completedAt: Prisma.FieldRef<"Order", 'DateTime'>
+  readonly version: Prisma.FieldRef<"Order", 'Int'>
 }
     
 

@@ -1117,6 +1117,7 @@ export const OrderScalarFieldEnum = {
   id: 'id',
   idempotencyKey: 'idempotencyKey',
   requestHash: 'requestHash',
+  trackingTokenHash: 'trackingTokenHash',
   customerName: 'customerName',
   customerPhone: 'customerPhone',
   comment: 'comment',
@@ -1124,7 +1125,8 @@ export const OrderScalarFieldEnum = {
   status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  completedAt: 'completedAt'
+  completedAt: 'completedAt',
+  version: 'version'
 } as const
 
 export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
