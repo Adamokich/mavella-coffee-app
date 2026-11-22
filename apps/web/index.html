@@ -6,6 +6,10 @@
     <meta name="theme-color" content="#3B2416" />
     <title>Coffee</title>
     <style>
+      :root {
+        --width-brand-logo: 230px;
+      }
+
       .app-splash {
         position: fixed;
         z-index: 1000;
@@ -20,19 +24,19 @@
         place-items: center;
       }
 
-      .app-splash__logo-frame {
-        width: min(86vw, 500px);
-      }
-
       .app-splash__logo-reveal {
         width: 0;
         overflow: hidden;
         animation: app-splash-logo-reveal 2.5s ease-out forwards;
       }
 
+      .app-splash__logo-frame,
+      .app-splash__logo {
+        width: min(86vw, 500px);
+      }
+
       .app-splash__logo {
         display: block;
-        width: min(86vw, 500px);
         height: auto;
       }
 
@@ -54,6 +58,10 @@
       }
 
       @media (max-width: 639px) {
+        :root {
+          --width-brand-logo: 180px;
+        }
+
         .app-splash__logo-frame,
         .app-splash__logo {
           width: min(65vw, 320px);

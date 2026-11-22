@@ -40,6 +40,7 @@
   const currentSummary = computed<CheckoutItemSummary[]>(() =>
     cart.items.map((item) => ({
       name: item.product.name,
+      imageUrl: item.product.imageUrl,
       options: item.options?.map((option) => option.name) ?? [],
       quantity: item.quantity,
       total: getCartItemTotal(item),
@@ -118,7 +119,7 @@
   <section class="checkout-page">
     <header class="checkout-header">
       <RouterLink class="back" to="/cart" aria-label="Вернуться в корзину">←</RouterLink>
-      <MavellaLogo class="logo" centered />
+      <MavellaLogo class="logo" />
     </header>
     <h1>Оформление заказа</h1>
     <form class="checkout-form" novalidate @submit.prevent="submitOrder">
@@ -249,9 +250,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-block-end: 4px;
   }
   .logo {
-    width: min(230px, 70%);
     color: var(--color-accent);
   }
   .back {

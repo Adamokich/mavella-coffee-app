@@ -39,7 +39,7 @@
 
 <template>
   <section class="order-page" aria-labelledby="order-title">
-    <MavellaLogo class="order-logo" centered />
+    <MavellaLogo class="order-logo" />
     <header class="order-header">
       <h1 id="order-title">Мой заказ</h1>
       <button v-if="cart.items.length" class="clear-button" type="button" @click="cart.clear">
@@ -123,9 +123,8 @@
     padding: 16px 16px 24px;
   }
   .order-logo {
-    width: min(230px, 100%);
-    height: auto;
     align-self: center;
+    margin-block-end: 4px;
     color: var(--color-accent);
   }
   .order-header {

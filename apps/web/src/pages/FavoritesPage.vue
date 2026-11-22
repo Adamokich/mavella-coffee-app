@@ -22,9 +22,11 @@
   <CatalogProvider v-slot="{ openModal }">
     <section class="favorites-page" aria-labelledby="favorites-heading">
       <header class="favorites-header">
-        <MavellaLogo class="favorites-logo" centered />
-        <h1 id="favorites-heading">Избранное</h1>
-        <p>Ваши любимые напитки</p>
+        <MavellaLogo class="favorites-logo" />
+        <div class="favorites-heading">
+          <h1 id="favorites-heading">Избранное</h1>
+          <p>Ваши любимые напитки</p>
+        </div>
       </header>
 
       <CatalogSkeleton v-if="catalogStore.isLoading" />
@@ -72,12 +74,15 @@
   .favorites-header {
     display: flex;
     flex-direction: column;
+    gap: var(--space-after-brand-logo);
+  }
+
+  .favorites-heading {
+    display: grid;
     gap: 4px;
   }
 
   .favorites-logo {
-    width: min(230px, 100%);
-    height: auto;
     align-self: center;
     color: var(--color-accent);
   }

@@ -25,3 +25,16 @@ export async function createOrder(payload: CreateOrderRequest): Promise<CreateOr
     trackingToken: data.trackingToken,
   };
 }
+
+export async function getOrderStatus(
+  orderId: number,
+  trackingToken: string,
+  signal: AbortSignal,
+): Promise<unknown> {
+  const { data } = await apiClient.get<unknown>(API_ROUTES.orderStatus(orderId), {
+    headers: { 'X-Tracking-Token': trackingToken },
+    signal,
+    timeout: 10000,
+  });
+  return data;
+}
