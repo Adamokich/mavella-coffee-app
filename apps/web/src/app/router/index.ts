@@ -24,9 +24,16 @@ export const router = createRouter({
       component: () => import('@/pages/CheckoutPage.vue'),
     },
     {
-      path: '/order-status',
+      path: '/orders',
+      name: 'order-history',
+      component: () => import('@/pages/OrderHistoryPage.vue'),
+      meta: { hideBottomNavigation: true },
+    },
+    {
+      path: '/order-status/:orderId(\\d+)?',
       name: 'order-status',
       component: () => import('@/pages/OrderStatusPage.vue'),
+      meta: { hideBottomNavigation: true },
     },
   ],
 });

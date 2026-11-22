@@ -18,7 +18,7 @@
     SearchIcon,
     TeaIcon,
   } from '@/shared/icons/category';
-  import { MavellaLogo } from '@/shared/icons';
+  import { MavellaLogo, OrderStatusIcon } from '@/shared/icons';
   import { useFixedElement } from '@/shared/composables';
 
   const catalogStore = useCatalogStore();
@@ -142,10 +142,20 @@
     <section class="home-page" aria-labelledby="catalog-heading">
       <header class="catalog-header">
         <div class="catalog-intro">
-          <MavellaLogo class="brand-logo" centered />
-          <p class="greeting">Добро пожаловать</p>
-
-          <h1 id="catalog-heading" class="catalog-title">Наш каталог</h1>
+          <MavellaLogo class="brand-logo" />
+          <div class="catalog-heading-row">
+            <div class="catalog-heading-copy">
+              <p class="greeting">Добро пожаловать</p>
+              <h1 id="catalog-heading" class="catalog-title">Наш каталог</h1>
+            </div>
+            <RouterLink
+              :to="{ name: 'order-history' }"
+              class="order-history-link"
+              aria-label="История заказов"
+            >
+              <OrderStatusIcon name="history" />
+            </RouterLink>
+          </div>
         </div>
 
         <div ref="catalogControlsWrapper" class="catalog-controls-wrapper">
@@ -319,14 +329,55 @@
   .catalog-intro {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: var(--space-after-brand-logo);
   }
 
   .brand-logo {
-    width: 230px;
-    height: auto;
-    align-self: center;
+    align-self: flex-start;
     color: var(--color-accent);
+  }
+
+  .catalog-heading-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .catalog-heading-copy {
+    display: grid;
+    gap: 5px;
+  }
+
+  .order-history-link {
+    display: grid;
+    width: 44px;
+    flex: none;
+    aspect-ratio: 1;
+    place-items: center;
+    border: 1px solid var(--color-navigation-active-border);
+    border-radius: 14px;
+    color: var(--color-accent);
+    background: var(--color-surface);
+  }
+
+  .order-history-link:hover {
+    background: var(--color-navigation-drop);
+  }
+
+  .order-history-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .order-history-link svg {
+    width: var(--icon-size-search);
+    height: var(--icon-size-search);
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   .greeting {

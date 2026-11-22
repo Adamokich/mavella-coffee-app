@@ -9,6 +9,8 @@
   --color-text-secondary: #b5a59a;
   --color-inactive: #75675f;
   --color-border: #43352e;
+  --color-status-ready: #b7dd92;
+  --color-status-cancelled: #f29280;
   --color-surface-glass: rgb(33 26 23 / 84%);
   --color-navigation-glass: color-mix(in srgb, var(--color-surface) 76%, transparent);
   --color-navigation-glass-shine: color-mix(in srgb, var(--color-text) 16%, transparent);
@@ -79,6 +81,7 @@
   --control-size-modal-close: 36px;
   --control-height-modal-submit: 56px;
   --icon-size-modal: 20px;
+  --space-after-brand-logo: 24px;
 
   color: var(--color-text);
   background: var(--color-background);

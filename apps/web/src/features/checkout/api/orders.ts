@@ -14,7 +14,9 @@ export async function createOrder(payload: CreateOrderRequest): Promise<CreateOr
   if (
     !Number.isInteger(data?.id) ||
     !Number.isFinite(data.totalPriceRub) ||
-    !orderStatuses.includes(data.status)
+    !orderStatuses.includes(data.status) ||
+    typeof data.trackingToken !== 'string' ||
+    !data.trackingToken
   ) {
     throw new Error('Invalid order response');
   }
@@ -24,4 +26,17 @@ export async function createOrder(payload: CreateOrderRequest): Promise<CreateOr
     totalPriceRub: data.totalPriceRub,
     trackingToken: data.trackingToken,
   };
+}
+
+export async function getOrderStatus(
+  orderId: number,
+  trackingToken: string,
+  signal: AbortSignal,
+): Promise<unknown> {
+  const { data } = await apiClient.get<unknown>(API_ROUTES.orderStatus(orderId), {
+    headers: { 'X-Tracking-Token': trackingToken },
+    signal,
+    timeout: 10000,
+  });
+  return data;
 }

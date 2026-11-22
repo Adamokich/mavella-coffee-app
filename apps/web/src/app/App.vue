@@ -1,21 +1,27 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
+  import { RouterView, useRoute } from 'vue-router';
 
-import { BottomNavigation } from '@/shared'
+  import { BottomNavigation } from '@/shared';
+
+  const route = useRoute();
 </script>
 
 <template>
-  <main class="app-shell">
+  <main class="app-shell" :class="{ 'app-shell--full-page': route.meta.hideBottomNavigation }">
     <RouterView v-slot="{ Component, route }">
       <Transition name="page" mode="out-in">
         <component :is="Component" :key="route.path" />
       </Transition>
     </RouterView>
-    <BottomNavigation />
+    <BottomNavigation v-if="!route.meta.hideBottomNavigation" />
   </main>
 </template>
 
 <style>
+  .app-shell.app-shell--full-page {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
   .page-enter-active,
   .page-leave-active {
     transition:

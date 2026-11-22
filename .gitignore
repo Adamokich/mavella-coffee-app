@@ -8,3 +8,4 @@ dist/
 .env.*
 !.env.example
 apps/web/src/features/products/assets/*-preview.png
+/docs/references/
