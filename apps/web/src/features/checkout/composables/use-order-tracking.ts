@@ -1,10 +1,10 @@
-import { OrderStatus } from '@coffee-app/contracts/orders';
 import { isAxiosError } from 'axios';
 import { io } from 'socket.io-client';
 import { ref, watch } from 'vue';
 import { getOrderStatus } from '../api/orders';
 import { useCheckoutStore } from '../stores/checkout.store';
-import type { OrderConfirmation, OrderStatusSnapshot } from '../types';
+import type { OrderConfirmation } from '../types';
+import { isFinalOrderStatus, parseOrderStatusSnapshot } from '../utils/order-status';
 import {
   delaySubscriptions,
   getSubscriptionDelay,
@@ -16,30 +16,6 @@ const MAX_REFRESH_INTERVAL = 60_000;
 const SUBSCRIPTION_TIMEOUT = 5_000;
 const RECONNECT_DELAYS = [5_000, 10_000, 20_000, 40_000, 60_000] as const;
 const UNAVAILABLE_HTTP_STATUSES = [401, 403, 404];
-const ORDER_STATUSES = Object.values(OrderStatus);
-
-function parseSnapshot(payload: unknown, orderId: number): OrderStatusSnapshot | null {
-  if (
-    !payload ||
-    typeof payload !== 'object' ||
-    !('orderId' in payload) ||
-    payload.orderId !== orderId ||
-    !('version' in payload) ||
-    typeof payload.version !== 'number' ||
-    !Number.isSafeInteger(payload.version) ||
-    payload.version < 1 ||
-    !('status' in payload)
-  ) {
-    return null;
-  }
-
-  const status = ORDER_STATUSES.find((value) => value === payload.status);
-  return status ? { orderId, status, version: payload.version } : null;
-}
-
-function isFinalStatus(status: OrderStatus) {
-  return status === OrderStatus.COMPLETED || status === OrderStatus.CANCELLED;
-}
 
 export function useOrderTracking(getOrder: () => OrderConfirmation | null) {
   const checkout = useCheckoutStore();
@@ -50,7 +26,7 @@ export function useOrderTracking(getOrder: () => OrderConfirmation | null) {
     ([orderId, trackingToken], _previous, onCleanup) => {
       trackingState.value = 'tracking';
       const order = getOrder();
-      if (!orderId || !trackingToken || !order || isFinalStatus(order.status)) return;
+      if (!orderId || !trackingToken || !order || isFinalOrderStatus(order.status)) return;
 
       const credentials = { orderId, trackingToken };
       const socket = io({
@@ -97,7 +73,7 @@ export function useOrderTracking(getOrder: () => OrderConfirmation | null) {
 
       function applySnapshot(payload: unknown, checkForGap = false) {
         const current = currentOrder();
-        const snapshot = parseSnapshot(payload, credentials.orderId);
+        const snapshot = parseOrderStatusSnapshot(payload, credentials.orderId);
         if (!current || !snapshot) return false;
 
         const previousVersion = current.version;
@@ -105,7 +81,7 @@ export function useOrderTracking(getOrder: () => OrderConfirmation | null) {
         const updated = currentOrder();
         if (!updated) return false;
 
-        if (isFinalStatus(updated.status)) {
+        if (isFinalOrderStatus(updated.status)) {
           trackingState.value = 'tracking';
           stop();
         } else if (

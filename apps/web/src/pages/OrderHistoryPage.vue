@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, ref } from 'vue';
+  import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
   import { useCheckoutStore } from '@/features/checkout';
   import { CoffeeIcon, MavellaLogo, OrderStatusIcon } from '@/shared/icons';
   import { formatPrice } from '@/shared/utils';
@@ -20,6 +20,16 @@
   } as const;
 
   const checkout = useCheckoutStore();
+  const refreshController = new AbortController();
+  const statusRefreshFailed = ref(false);
+
+  onMounted(async () => {
+    const { signal } = refreshController;
+    const refreshed = await checkout.refreshActiveOrderStatuses(signal);
+    if (!signal.aborted) statusRefreshFailed.value = !refreshed;
+  });
+  onBeforeUnmount(() => refreshController.abort());
+
   const activeFilter = ref<(typeof FILTERS)[number]['id']>('all');
   const hasSwitchedFilter = ref(false);
   const filterIndicatorStyle = computed(() => {
@@ -93,6 +103,9 @@
       <div class="history-heading">
         <h1 id="history-title">Мои заказы</h1>
         <p>История и статус ваших заказов.</p>
+        <p v-if="statusRefreshFailed" role="status">
+          Не удалось обновить все статусы. Для этих заказов показаны сохранённые данные.
+        </p>
       </div>
     </header>
 

@@ -50,10 +50,10 @@
 
   const checkout = useCheckoutStore();
   const route = useRoute();
-  const orderId = route.params.orderId;
+  const orderId = computed(() => route.params.orderId);
   const order = computed(() =>
-    orderId
-      ? (checkout.orderHistory.find((entry) => entry.id === Number(orderId)) ?? null)
+    orderId.value
+      ? (checkout.orderHistory.find((entry) => entry.id === Number(orderId.value)) ?? null)
       : checkout.confirmation,
   );
   const { trackingState } = useOrderTracking(() => order.value);
@@ -174,6 +174,16 @@
         </Transition>
       </div>
 
+      <div v-if="checkout.unsavedOrderId === order.id" class="history-notice glass-panel">
+        <p role="status">
+          Заказ принят, но его не удалось сохранить в истории. Если после обновления страницы заказ
+          пропадёт, откройте оформление и повторите сохранённую отправку.
+        </p>
+        <button class="history-retry" type="button" @click="checkout.retrySavingHistory">
+          Сохранить в истории
+        </button>
+      </div>
+
       <dl class="order-meta">
         <div>
           <dt>Номер заказа</dt>
@@ -214,10 +224,7 @@
               <p>{{ item.name }}</p>
               <p v-if="item.options.length" class="item-options">{{ item.options.join(' · ') }}</p>
             </div>
-            <span v-if="item.total !== null" class="item-price">
-              {{ item.quantity }} × {{ formatPrice(item.total / item.quantity) }}
-            </span>
-            <span v-else class="item-price">{{ item.quantity }} шт.</span>
+            <span class="item-quantity">{{ item.quantity }} шт.</span>
           </li>
         </ul>
         <p v-else class="items-unavailable">Состав заказа недоступен.</p>
@@ -232,6 +239,9 @@
       <div class="status-card-copy">
         <h2>Данные заказа недоступны</h2>
         <p>Заказ не найден в истории этого браузера.</p>
+        <RouterLink v-if="checkout.pending" :to="{ name: 'checkout' }" class="catalog-link">
+          Восстановить сохранённую отправку
+        </RouterLink>
         <RouterLink :to="{ name: 'order-history' }" class="catalog-link">Мои заказы</RouterLink>
       </div>
     </div>
@@ -318,6 +328,7 @@
 
   .back-button:focus-visible,
   .copy-button:focus-visible,
+  .history-retry:focus-visible,
   .catalog-link:focus-visible {
     outline: 2px solid var(--status-accent);
     outline-offset: 2px;
@@ -620,7 +631,7 @@
     font-weight: var(--font-weight-regular);
   }
 
-  .item-price {
+  .item-quantity {
     white-space: nowrap;
   }
 
@@ -631,6 +642,26 @@
   .catalog-link {
     justify-self: start;
     color: var(--status-accent);
+  }
+
+  .history-notice {
+    display: grid;
+    justify-items: start;
+    gap: 8px;
+    padding: var(--status-spacing);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-secondary);
+  }
+
+  .history-retry {
+    min-height: 44px;
+    padding: 0 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    color: var(--status-accent);
+    background: var(--color-card);
+    font: inherit;
+    cursor: pointer;
   }
 
   .visually-hidden {

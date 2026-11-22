@@ -14,7 +14,9 @@ export async function createOrder(payload: CreateOrderRequest): Promise<CreateOr
   if (
     !Number.isInteger(data?.id) ||
     !Number.isFinite(data.totalPriceRub) ||
-    !orderStatuses.includes(data.status)
+    !orderStatuses.includes(data.status) ||
+    typeof data.trackingToken !== 'string' ||
+    !data.trackingToken
   ) {
     throw new Error('Invalid order response');
   }

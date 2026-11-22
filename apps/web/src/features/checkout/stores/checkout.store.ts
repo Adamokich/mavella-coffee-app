@@ -2,8 +2,9 @@ import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 import { isAxiosError } from 'axios';
 import { OrderStatus } from '@coffee-app/contracts/orders';
-import { createOrder } from '../api/orders';
+import { createOrder, getOrderStatus } from '../api/orders';
 import type { OrderConfirmation, OrderStatusSnapshot, PendingSubmission } from '../types';
+import { isFinalOrderStatus, parseOrderStatusSnapshot } from '../utils/order-status';
 
 const PENDING_KEY = 'coffee-app:pending-order';
 const HISTORY_KEY = 'coffee-app:order-history';
@@ -52,10 +53,26 @@ function loadPending(): PendingSubmission | null {
   }
 }
 
+function mergeHistory(entries: OrderConfirmation[]): OrderConfirmation[] {
+  const orders = new Map<string, OrderConfirmation>();
+  for (const entry of entries) {
+    const saved = orders.get(entry.trackingToken);
+    if (
+      !saved ||
+      (entry.version ?? 0) > (saved.version ?? 0) ||
+      (entry.version === undefined && saved.version === undefined)
+    ) {
+      orders.set(entry.trackingToken, entry);
+    }
+  }
+  return [...orders.values()].sort((first, second) => second.id - first.id);
+}
+
 export const useCheckoutStore = defineStore('checkout', () => {
   const pending = ref<PendingSubmission | null>(loadPending());
   const orderHistory = ref<OrderConfirmation[]>(loadHistory());
   const lastConfirmedOrder = ref<OrderConfirmation | null>(null);
+  const unsavedOrderId = ref<number | null>(null);
   const confirmation = computed(() => {
     const latest = lastConfirmedOrder.value;
     if (!latest) return orderHistory.value[0] ?? null;
@@ -69,24 +86,24 @@ export const useCheckoutStore = defineStore('checkout', () => {
   function saveHistory(order: OrderConfirmation) {
     if (!order.trackingToken) return;
 
-    const orders = new Map<string, OrderConfirmation>();
-    for (const entry of [...loadHistory(), ...orderHistory.value, order]) {
-      const saved = orders.get(entry.trackingToken);
-      if (
-        !saved ||
-        (entry.version ?? 0) > (saved.version ?? 0) ||
-        (entry.version === undefined && saved.version === undefined)
-      ) {
-        orders.set(entry.trackingToken, entry);
-      }
-    }
-
-    const sorted = [...orders.values()].sort((first, second) => second.id - first.id);
+    const sorted = mergeHistory([...loadHistory(), ...orderHistory.value, order]);
 
     orderHistory.value = sorted;
     try {
       localStorage.setItem(HISTORY_KEY, JSON.stringify(sorted));
-    } catch {}
+    } catch {
+      return;
+    }
+    if (unsavedOrderId.value !== null) {
+      unsavedOrderId.value = null;
+      discardPending();
+    }
+  }
+
+  function retrySavingHistory() {
+    if (unsavedOrderId.value !== null && confirmation.value) {
+      saveHistory(confirmation.value);
+    }
   }
 
   function updateStatus(order: OrderConfirmation, snapshot: OrderStatusSnapshot) {
@@ -94,14 +111,41 @@ export const useCheckoutStore = defineStore('checkout', () => {
     saveHistory({ ...order, status: snapshot.status, version: snapshot.version });
   }
 
+  async function refreshActiveOrderStatuses(signal: AbortSignal): Promise<boolean> {
+    orderHistory.value = mergeHistory([...orderHistory.value, ...loadHistory()]);
+    const activeOrders = orderHistory.value.filter(
+      (order) => order.trackingToken && !isFinalOrderStatus(order.status),
+    );
+
+    const results = await Promise.allSettled(
+      activeOrders.map(async (order) => {
+        const payload = await getOrderStatus(order.id, order.trackingToken, signal);
+        if (signal.aborted) return;
+
+        const snapshot = parseOrderStatusSnapshot(payload, order.id);
+        if (!snapshot) throw new Error('Invalid order status response');
+        updateStatus(order, snapshot);
+      }),
+    );
+    return results.every((result) => result.status === 'fulfilled');
+  }
+
   function discardPending() {
-    localStorage.removeItem(PENDING_KEY);
+    try {
+      const saved = loadPending();
+      if (saved && saved.payload.idempotencyKey === pending.value?.payload.idempotencyKey) {
+        localStorage.removeItem(PENDING_KEY);
+      }
+    } catch {
+      error.value = 'Не удалось очистить сохранённую отправку. Проверьте настройки браузера.';
+      return;
+    }
     pending.value = null;
     error.value = null;
   }
 
-  async function submit(submission?: PendingSubmission): Promise<boolean> {
-    if (isSubmitting.value) return false;
+  async function submit(submission?: PendingSubmission): Promise<OrderConfirmation | null> {
+    if (isSubmitting.value || unsavedOrderId.value !== null) return null;
     const isFirstAttempt = !pending.value;
     if (!pending.value && submission) {
       try {
@@ -111,10 +155,10 @@ export const useCheckoutStore = defineStore('checkout', () => {
       } catch {
         error.value =
           'Не удалось сохранить заказ для безопасного повтора. Проверьте настройки браузера.';
-        return false;
+        return null;
       }
     }
-    if (!pending.value) return false;
+    if (!pending.value) return null;
     isSubmitting.value = true;
     error.value = null;
     try {
@@ -122,8 +166,9 @@ export const useCheckoutStore = defineStore('checkout', () => {
       const response = await createOrder(payload);
       const order = { ...response, summary, submittedAt };
       lastConfirmedOrder.value = order;
+      unsavedOrderId.value = order.id;
       saveHistory(order);
-      return true;
+      return order;
     } catch (cause: unknown) {
       const status = isAxiosError(cause) ? cause.response?.status : undefined;
       if (status === 400 && isFirstAttempt) {
@@ -136,7 +181,7 @@ export const useCheckoutStore = defineStore('checkout', () => {
         error.value =
           'Не удалось получить подтверждение. Заказ мог быть принят. Повторите отправку сохранённого заказа.';
       }
-      return false;
+      return null;
     } finally {
       isSubmitting.value = false;
     }
@@ -146,10 +191,13 @@ export const useCheckoutStore = defineStore('checkout', () => {
     pending,
     confirmation,
     orderHistory,
+    unsavedOrderId,
     isSubmitting,
     error,
     submit,
     discardPending,
+    retrySavingHistory,
     updateStatus,
+    refreshActiveOrderStatuses,
   };
 });

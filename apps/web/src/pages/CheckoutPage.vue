@@ -96,12 +96,19 @@
         return;
       }
     }
-    const success = await checkout.submit(submission);
-    if (success) {
-      if (!cartChanged.value) cart.clear();
-      checkout.discardPending();
-      await router.push('/order-status');
+    const submittedItems = checkout.pending?.payload.items ?? submission?.payload.items;
+    const order = await checkout.submit(submission);
+    if (!order) return;
+
+    if (JSON.stringify(submittedItems) === JSON.stringify(currentItems.value)) {
+      try {
+        cart.clear();
+      } catch {
+        // The confirmed order is still available even if the browser cannot save the cart.
+      }
+      checkout.retrySavingHistory();
     }
+    await router.push({ name: 'order-status', params: { orderId: order.id } });
   }
 
   function abandonPending() {
@@ -122,7 +129,14 @@
       <MavellaLogo class="logo" />
     </header>
     <h1>Оформление заказа</h1>
-    <form class="checkout-form" novalidate @submit.prevent="submitOrder">
+    <div v-if="checkout.unsavedOrderId !== null" class="pending-notice" role="status">
+      <h2 class="pending-notice__heading">Заказ принят кофейней</h2>
+      <p>Не удалось сохранить заказ в истории этого браузера.</p>
+      <RouterLink :to="{ name: 'order-status', params: { orderId: checkout.unsavedOrderId } }">
+        Открыть заказ
+      </RouterLink>
+    </div>
+    <form v-else class="checkout-form" novalidate @submit.prevent="submitOrder">
       <section class="checkout-section">
         <h2>Контактные данные</h2>
         <label for="checkout-name">Ваше имя</label>
