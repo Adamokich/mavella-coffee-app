@@ -82,7 +82,7 @@
 
   .product-image-wrapper {
     position: relative;
-    aspect-ratio: 1;
+    aspect-ratio: var(--aspect-ratio-product-image);
     overflow: hidden;
     border-radius: var(--radius-product-image);
     background: var(--color-surface);

@@ -96,7 +96,7 @@
 
   .favorites-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 16px;
   }
 
@@ -163,13 +163,15 @@
     }
   }
 
+  @media (min-width: 360px) {
+    .favorites-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
   @media (min-width: 640px) {
     .favorites-page {
       padding: 32px 24px;
-    }
-
-    .favorites-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 </style>

@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { computed, onScopeDispose, ref } from 'vue';
 import { defineStore } from 'pinia';
 import { isAxiosError } from 'axios';
 import { OrderStatus } from '@coffee-app/contracts/orders';
@@ -9,9 +9,8 @@ import { isFinalOrderStatus, parseOrderStatusSnapshot } from '../utils/order-sta
 const PENDING_KEY = 'coffee-app:pending-order';
 const HISTORY_KEY = 'coffee-app:order-history';
 
-function loadHistory(): OrderConfirmation[] {
+function parseHistory(raw: string | null): OrderConfirmation[] {
   try {
-    const raw = localStorage.getItem(HISTORY_KEY);
     const history: unknown = raw ? JSON.parse(raw) : [];
     if (!Array.isArray(history)) return [];
 
@@ -31,6 +30,14 @@ function loadHistory(): OrderConfirmation[] {
           ? order
           : { ...order, version: undefined };
       });
+  } catch {
+    return [];
+  }
+}
+
+function loadHistory(): OrderConfirmation[] {
+  try {
+    return parseHistory(localStorage.getItem(HISTORY_KEY));
   } catch {
     return [];
   }
@@ -71,6 +78,9 @@ function mergeHistory(entries: OrderConfirmation[]): OrderConfirmation[] {
 export const useCheckoutStore = defineStore('checkout', () => {
   const pending = ref<PendingSubmission | null>(loadPending());
   const orderHistory = ref<OrderConfirmation[]>(loadHistory());
+  const hasProcessedOrders = computed(() =>
+    orderHistory.value.some((order) => isFinalOrderStatus(order.status)),
+  );
   const lastConfirmedOrder = ref<OrderConfirmation | null>(null);
   const unsavedOrderId = ref<number | null>(null);
   const confirmation = computed(() => {
@@ -82,6 +92,61 @@ export const useCheckoutStore = defineStore('checkout', () => {
   });
   const isSubmitting = ref(false);
   const error = ref<string | null>(null);
+
+  function forgetLastConfirmation(removed: Set<string>) {
+    const latest = lastConfirmedOrder.value;
+    if (latest && removed.has(latest.trackingToken)) {
+      lastConfirmedOrder.value = null;
+    }
+  }
+
+  function syncClearedHistory(event: StorageEvent) {
+    if (event.key !== HISTORY_KEY || event.storageArea !== localStorage) return;
+
+    const saved = new Set(parseHistory(event.newValue).map((order) => order.trackingToken));
+    const removed = parseHistory(event.oldValue)
+      .filter((order) => isFinalOrderStatus(order.status) && !saved.has(order.trackingToken))
+      .map((order) => order.trackingToken);
+
+    if (removed.length) {
+      const removedTokens = new Set(removed);
+      orderHistory.value = orderHistory.value.filter(
+        (order) => !removedTokens.has(order.trackingToken),
+      );
+      forgetLastConfirmation(removedTokens);
+    }
+  }
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('storage', syncClearedHistory);
+    onScopeDispose(() => window.removeEventListener('storage', syncClearedHistory));
+  }
+
+  function clearProcessedOrderHistory(): boolean {
+    try {
+      const history = mergeHistory([
+        ...parseHistory(localStorage.getItem(HISTORY_KEY)),
+        ...orderHistory.value,
+      ]);
+      const remaining = history.filter((order) => !isFinalOrderStatus(order.status));
+      if (remaining.length) {
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(remaining));
+      } else {
+        localStorage.removeItem(HISTORY_KEY);
+      }
+
+      const removed = history.filter((order) => isFinalOrderStatus(order.status));
+      if (removed.some((order) => order.id === unsavedOrderId.value)) {
+        unsavedOrderId.value = null;
+        discardPending();
+      }
+      forgetLastConfirmation(new Set(removed.map((order) => order.trackingToken)));
+      orderHistory.value = remaining;
+      return true;
+    } catch {
+      return false;
+    }
+  }
 
   function saveHistory(order: OrderConfirmation) {
     if (!order.trackingToken) return;
@@ -107,8 +172,11 @@ export const useCheckoutStore = defineStore('checkout', () => {
   }
 
   function updateStatus(order: OrderConfirmation, snapshot: OrderStatusSnapshot) {
-    if (snapshot.orderId !== order.id || snapshot.version <= (order.version ?? 0)) return;
-    saveHistory({ ...order, status: snapshot.status, version: snapshot.version });
+    const current = orderHistory.value.find((entry) => entry.trackingToken === order.trackingToken);
+    if (!current || snapshot.orderId !== current.id || snapshot.version <= (current.version ?? 0)) {
+      return;
+    }
+    saveHistory({ ...current, status: snapshot.status, version: snapshot.version });
   }
 
   async function refreshActiveOrderStatuses(signal: AbortSignal): Promise<boolean> {
@@ -191,12 +259,14 @@ export const useCheckoutStore = defineStore('checkout', () => {
     pending,
     confirmation,
     orderHistory,
+    hasProcessedOrders,
     unsavedOrderId,
     isSubmitting,
     error,
     submit,
     discardPending,
     retrySavingHistory,
+    clearProcessedOrderHistory,
     updateStatus,
     refreshActiveOrderStatuses,
   };
