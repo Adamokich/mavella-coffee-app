@@ -96,7 +96,7 @@
 
   .favorites-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 16px;
   }
 
@@ -160,6 +160,12 @@
     .favorites-list-leave-active,
     .favorites-list-move {
       transition: none;
+    }
+  }
+
+  @media (min-width: 360px) {
+    .favorites-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 

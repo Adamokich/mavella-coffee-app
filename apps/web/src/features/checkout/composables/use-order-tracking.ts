@@ -26,9 +26,11 @@ export function useOrderTracking(getOrder: () => OrderConfirmation | null) {
     ([orderId, trackingToken], _previous, onCleanup) => {
       trackingState.value = 'tracking';
       const order = getOrder();
+
       if (!orderId || !trackingToken || !order || isFinalOrderStatus(order.status)) return;
 
       const credentials = { orderId, trackingToken };
+
       const socket = io({
         path: '/socket.io/',
         transports: ['websocket'],
@@ -36,7 +38,9 @@ export function useOrderTracking(getOrder: () => OrderConfirmation | null) {
         reconnection: false,
         timeout: SUBSCRIPTION_TIMEOUT,
       });
+
       const controller = new AbortController();
+
       let subscriptionTimer: number | undefined;
       let refreshTimer: number | undefined;
       let reconnectTimer: number | undefined;
@@ -50,7 +54,9 @@ export function useOrderTracking(getOrder: () => OrderConfirmation | null) {
 
       function currentOrder() {
         if (controller.signal.aborted) return null;
+
         const current = getOrder();
+
         return current?.id === credentials.orderId &&
           current.trackingToken === credentials.trackingToken
           ? current

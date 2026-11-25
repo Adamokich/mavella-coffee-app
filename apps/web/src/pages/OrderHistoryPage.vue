@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+  import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
   import { useCheckoutStore } from '@/features/checkout';
   import { CoffeeIcon, MavellaLogo, OrderStatusIcon } from '@/shared/icons';
   import { formatPrice } from '@/shared/utils';
@@ -22,6 +22,28 @@
   const checkout = useCheckoutStore();
   const refreshController = new AbortController();
   const statusRefreshFailed = ref(false);
+  const filters = ref<HTMLElement | null>(null);
+  const clearDialog = ref<HTMLDialogElement | null>(null);
+  const clearFailed = ref(false);
+  const historyCleared = ref(false);
+
+  function openClearDialog() {
+    clearFailed.value = false;
+    historyCleared.value = false;
+    clearDialog.value?.showModal();
+  }
+
+  async function clearProcessedOrders() {
+    if (!checkout.clearProcessedOrderHistory()) {
+      clearFailed.value = true;
+      return;
+    }
+
+    clearDialog.value?.close();
+    historyCleared.value = true;
+    await nextTick();
+    filters.value?.querySelector<HTMLButtonElement>('[aria-pressed="true"]')?.focus();
+  }
 
   onMounted(async () => {
     const { signal } = refreshController;
@@ -109,7 +131,7 @@
       </div>
     </header>
 
-    <div class="history-filters" role="group" aria-label="Фильтр заказов">
+    <div ref="filters" class="history-filters" role="group" aria-label="Фильтр заказов">
       <span class="filter-indicator" :style="filterIndicatorStyle" aria-hidden="true">
         <span
           :key="activeFilter"
@@ -128,6 +150,47 @@
         <span>{{ filter.label }}</span>
       </button>
     </div>
+
+    <div class="history-actions">
+      <button
+        class="history-action history-action--destructive"
+        type="button"
+        :disabled="!checkout.hasProcessedOrders"
+        @click="openClearDialog"
+      >
+        Очистить обработанные заказы
+      </button>
+      <p v-if="historyCleared" role="status">Обработанные заказы удалены из истории.</p>
+    </div>
+
+    <dialog
+      ref="clearDialog"
+      class="clear-history-dialog"
+      aria-labelledby="clear-history-title"
+      aria-describedby="clear-history-description"
+    >
+      <div class="clear-history-content">
+        <h2 id="clear-history-title">Очистить обработанные заказы?</h2>
+        <p id="clear-history-description">
+          Завершённые и отменённые заказы будут удалены из истории на этом устройстве.
+        </p>
+        <p v-if="clearFailed" class="clear-history-error" role="alert">
+          Не удалось очистить историю. Попробуйте ещё раз.
+        </p>
+        <div class="clear-history-actions">
+          <button class="history-action" type="button" autofocus @click="clearDialog?.close()">
+            Отмена
+          </button>
+          <button
+            class="history-action history-action--confirm"
+            type="button"
+            @click="clearProcessedOrders"
+          >
+            Очистить
+          </button>
+        </div>
+      </div>
+    </dialog>
 
     <div class="history-results">
       <Transition
@@ -350,6 +413,82 @@
 
   .history-filters button[aria-pressed='true'] {
     color: var(--history-accent);
+  }
+
+  .history-actions,
+  .clear-history-content {
+    display: grid;
+    gap: 12px;
+  }
+
+  .history-actions {
+    justify-items: start;
+  }
+
+  .history-actions p,
+  .clear-history-content p {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-secondary);
+  }
+
+  .history-action {
+    min-height: 44px;
+    padding: 8px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-modal-option);
+    color: var(--color-text);
+    background: var(--color-card);
+    font: inherit;
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+  }
+
+  .history-action:enabled:hover {
+    border-color: currentColor;
+  }
+
+  .history-action--destructive,
+  .clear-history-content .clear-history-error {
+    color: var(--color-status-cancelled);
+  }
+
+  .history-action--confirm {
+    color: var(--color-background);
+    background: var(--color-status-cancelled);
+  }
+
+  .history-action:disabled {
+    color: var(--color-text-secondary);
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .clear-history-dialog {
+    width: min(420px, calc(100% - 32px));
+    max-height: calc(100% - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    margin: auto;
+    padding: 20px;
+    overflow: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--history-radius);
+    color: var(--color-text);
+    background: var(--color-surface);
+  }
+
+  .clear-history-dialog::backdrop {
+    background: var(--color-modal-scrim);
+  }
+
+  .clear-history-content h2 {
+    font-size: var(--font-size-section-heading);
+    line-height: 1.25;
+  }
+
+  .clear-history-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
   }
 
   .order-badge--preparing,

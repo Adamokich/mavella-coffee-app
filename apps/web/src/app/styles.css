@@ -68,6 +68,7 @@
   --control-height-product-meta-compact: 26px;
   --control-size-product-add-compact: 40px;
   --control-size-product-favorite-compact: 34px;
+  --aspect-ratio-product-image: 16 / 9;
   --radius-product-card: 28px;
   --radius-product-image: 20px;
   --radius-product-add: 18px;

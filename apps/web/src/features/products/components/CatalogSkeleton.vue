@@ -65,7 +65,7 @@
     border-radius: var(--radius-product-card);
   }
   .skeleton-image {
-    aspect-ratio: 1;
+    aspect-ratio: var(--aspect-ratio-product-image);
     border-radius: var(--radius-product-image);
   }
   .skeleton-line {
@@ -90,11 +90,13 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
+
   @media (min-width: 640px) {
     .skeleton-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
+
   @media (prefers-reduced-motion: reduce) {
     .skeleton-tab,
     .skeleton-image,
