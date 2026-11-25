@@ -173,5 +173,9 @@
     .favorites-page {
       padding: 32px 24px;
     }
+
+    .favorites-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
 </style>

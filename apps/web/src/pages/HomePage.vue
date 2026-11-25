@@ -650,6 +650,10 @@
       margin-right: -24px;
       padding-right: 24px;
     }
+
+    .catalog-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
